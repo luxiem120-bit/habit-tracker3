@@ -1,578 +1,428 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura All-in-One 全功能學習與習慣空間</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0f172a;
-      --panel: rgba(30, 41, 59, 0.7);
-      --panel-border: rgba(255, 255, 255, 0.08);
-      --primary: #6366f1;
-      --primary-glow: rgba(99, 102, 241, 0.35);
-      --accent: #10b981;
-      --danger: #ef4444;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura All-in-One 全功能學習與習慣空間</title>
+    <!-- 必須載入 Chart.js 否則圓盤無法繪製 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --accent: #10b981;
+            --danger: #ef4444;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
 
-    body {
-      background: var(--bg);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 20px 10px;
-    }
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--panel-border);
-    }
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
 
-    header h1 {
-      font-size: 1.6rem;
-      background: linear-gradient(135deg, #a5b4fc, #6366f1, #34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        .user-section input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
 
-    .user-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
 
-    @media (min-width: 850px) {
-      .grid-2 { grid-template-columns: 1fr 1fr; }
-    }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .card {
-      background: var(--panel);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--panel-border);
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 8px 25px -5px rgba(0,0,0,0.4);
-    }
+        input, button, select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
 
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        button {
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
 
-    input, select, button {
-      font-size: 14px;
-      border-radius: 8px;
-      outline: none;
-      transition: all 0.2s;
-    }
+        button:hover {
+            opacity: 0.9;
+        }
 
-    input, select {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--panel-border);
-      color: var(--text);
-      padding: 8px 12px;
-    }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
 
-    input:focus { border-color: var(--primary); }
+        .vocab-item {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
 
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+        .quiz-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 15px;
+        }
 
-    button:hover { opacity: 0.9; }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
 
-    /* 時間事項與清單 */
-    .time-item {
-      background: rgba(15, 23, 42, 0.4);
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .calc-screen {
+            grid-column: span 4;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            color: #34d399;
+            font-family: monospace;
+            font-size: 1.5rem;
+            text-align: right;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
 
-    /* 單字卡模組 */
-    .vocab-item {
-      background: rgba(15, 23, 42, 0.4);
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
+        .btn-calc {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            font-size: 1.1rem;
+        }
 
-    .vocab-info { display: flex; flex-direction: column; gap: 2px; }
-    .vocab-word { font-weight: bold; font-size: 1rem; color: #a5b4fc; }
-    .vocab-meaning { font-size: 0.85rem; color: var(--text-muted); }
-    .vocab-ebbinghaus { font-size: 0.75rem; color: var(--accent); }
-
-    .quiz-box {
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .quiz-question {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 12px;
-      color: #ffffff;
-    }
-
-    /* 計算機 */
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .calc-screen {
-      grid-column: span 4;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--panel-border);
-      color: #34d399;
-      font-family: monospace;
-      font-size: 1.5rem;
-      text-align: right;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 5px;
-    }
-
-    .btn-calc {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text);
-      padding: 12px;
-      font-size: 1.1rem;
-    }
-
-    .btn-calc-op { background: var(--primary); }
-
-    .delete-btn {
-      background: transparent;
-      color: var(--danger);
-      font-size: 12px;
-      padding: 2px 6px;
-    }
-  </style>
+        .btn-calc-op { background: var(--primary); }
+        .delete-btn { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
+    </style>
 </head>
 <body>
 
-  <div class="container">
+<div class="container">
     <header>
-      <h1>📚 Aura Learning & Habit Space</h1>
-      <div class="user-section">
-        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">未登入</span>
-        <input type="text" id="usernameInput" placeholder="輸入用戶名" style="width: 100px;">
-        <button onclick="loginUser()">登入/切換</button>
-      </div>
+        <h1>🌸 Aura Learning & Habit Space</h1>
+        <div class="user-section">
+            <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">未登入</span>
+            <input type="text" id="usernameInput" placeholder="輸入用戶名" style="width: 100px;">
+            <button onclick="loginUser()">登入/切換</button>
+        </div>
     </header>
 
-    <!-- 上半部：時間紀錄與趨勢圖表 -->
+    <!-- 上半部：時間紀錄與圓盤圖表 -->
     <div class="grid-2">
-      <!-- 時間與專注事項記錄 -->
-      <div class="card">
-        <div class="card-title">⏱️ 專注與時間紀錄</div>
-        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-          <input type="text" id="timeItemName" placeholder="事項名稱 (如: 睡眠, 深度專注)" style="flex: 2;">
-          <input type="time" id="startTime" style="flex: 1;">
-          <input type="time" id="endTime" style="flex: 1;">
-          <button onclick="addTimeLog()">加</button>
+        <!-- 時間紀錄 -->
+        <div class="card">
+            <div class="card-title">⏱️ 專注與時間紀錄</div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                <input type="text" id="timeItemName" placeholder="事項名稱 (如: 睡眠, 深度專注)" style="flex: 2;">
+                <input type="time" id="startTime" style="flex: 1;">
+                <input type="time" id="endTime" style="flex: 1;">
+                <button onclick="addTimeLog()">加</button>
+            </div>
+            <div id="timeLogList" style="max-height: 180px; overflow-y: auto;"></div>
         </div>
-        <div id="timeLogList" style="max-height: 180px; overflow-y: auto;"></div>
-      </div>
 
-      <!-- 時間趨勢圖表 -->
-      <div class="card">
-        <div class="card-title">📊 時間追蹤圖表</div>
-        <div style="height: 180px;">
-          <canvas id="habitChart"></canvas>
+        <!-- 時間趨勢圓盤圖表 -->
+        <div class="card">
+            <div class="card-title">📊 時間分配圓盤圖</div>
+            <div class="chart-container">
+                <canvas id="habitChart"></canvas>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- 下半部：單字本與計算機 -->
+    <!-- 下半部：單字卡與計算機 -->
     <div class="grid-2">
-      <!-- Quizlet 風格單字本與艾賓浩斯曲線 -->
-      <div class="card">
-        <div class="card-title">📖 艾賓浩斯單字本</div>
-        
-        <!-- 新增單字 -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="vocabWord" placeholder="英文單字 (如: apple)" style="flex:1;">
-            <input type="text" id="vocabMeaning" placeholder="中文解釋 (如: 蘋果)" style="flex:1;">
-          </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <label style="font-size: 0.8rem; color: var(--text-muted);">初學時間：</label>
-            <input type="datetime-local" id="vocabDate" style="flex:1;">
-            <button onclick="addVocab()">新增單字</button>
-          </div>
+        <!-- 艾賓浩斯單字本 -->
+        <div class="card">
+            <div class="card-title">📖 艾賓浩斯單字本</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="vocabWord" placeholder="英文單字 (如: apple)" style="flex:1;">
+                    <input type="text" id="vocabMeaning" placeholder="中文解釋 (如: 蘋果)" style="flex:1;">
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">初學時間:</label>
+                    <input type="datetime-local" id="vocabDate" style="flex:1;">
+                    <button onclick="addVocab()">新增單字</button>
+                </div>
+            </div>
+
+            <!-- 背誦與測驗選單 -->
+            <div class="quiz-box">
+                <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
+                    <button style="font-size: 0.75rem;" onclick="startQuiz('en-zh')">英翻中</button>
+                    <button style="font-size: 0.75rem;" onclick="startQuiz('zh-en')">中翻英</button>
+                    <button style="font-size: 0.75rem;" onclick="startQuiz('audio')">🔊 聽力測驗</button>
+                    <button style="font-size: 0.75rem;" onclick="startQuiz('spelling')">⌨️ 拼字測驗</button>
+                </div>
+                <div id="quizArea" style="display: none;">
+                    <div class="quiz-question" id="quizQuestion">---</div>
+                    <div id="quizInputArea" style="margin-bottom: 10px;"></div>
+                    <button onclick="checkAnswer()">提交答案</button>
+                    <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; max-height: 200px; overflow-y: auto;" id="vocabList"></div>
         </div>
 
-        <!-- 背誦模式選擇與測驗 -->
-        <div class="quiz-box">
-          <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
-            <button style="font-size: 0.75rem;" onclick="startQuiz('en-zh')">英翻中</button>
-            <button style="font-size: 0.75rem;" onclick="startQuiz('zh-en')">中翻英</button>
-            <button style="font-size: 0.75rem;" onclick="startQuiz('audio')">🔊 聽力測驗</button>
-            <button style="font-size: 0.75rem;" onclick="startQuiz('spelling')">⌨️ 拼字測驗</button>
-          </div>
+        <!-- 輕量計算機 -->
+        <div class="card">
+            <div class="card-title">🧮 輕量計算機</div>
+            <div class="calc-screen" id="calcScreen">0</div>
+            <div class="calc-grid">
+                <button class="btn-calc" onclick="calcInput('C')">C</button>
+                <button class="btn-calc" onclick="calcInput('(')">(</button>
+                <button class="btn-calc" onclick="calcInput(')')">)</button>
+                <button class="btn-calc btn-calc-op" onclick="calcInput('/')">/</button>
 
-          <div id="quizArea" style="display: none;">
-            <div class="quiz-question" id="quizQuestion">---</div>
-            <div id="quizInputArea" style="margin-bottom: 10px;"></div>
-            <button onclick="checkAnswer()">提交答案</button>
-            <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
-          </div>
+                <button class="btn-calc" onclick="calcInput('7')">7</button>
+                <button class="btn-calc" onclick="calcInput('8')">8</button>
+                <button class="btn-calc" onclick="calcInput('9')">9</button>
+                <button class="btn-calc btn-calc-op" onclick="calcInput('*')">*</button>
+
+                <button class="btn-calc" onclick="calcInput('4')">4</button>
+                <button class="btn-calc" onclick="calcInput('5')">5</button>
+                <button class="btn-calc" onclick="calcInput('6')">6</button>
+                <button class="btn-calc btn-calc-op" onclick="calcInput('-')">-</button>
+
+                <button class="btn-calc" onclick="calcInput('1')">1</button>
+                <button class="btn-calc" onclick="calcInput('2')">2</button>
+                <button class="btn-calc" onclick="calcInput('3')">3</button>
+                <button class="btn-calc btn-calc-op" onclick="calcInput('+')">+</button>
+
+                <button class="btn-calc" onclick="calcInput('0')">0</button>
+                <button class="btn-calc" onclick="calcInput('.')">.</button>
+                <button class="btn-calc btn-calc-op" style="grid-column: span 2;" onclick="calcInput('=')">=</button>
+            </div>
         </div>
-
-        <!-- 單字清單 -->
-        <div style="margin-top: 15px; max-height: 200px; overflow-y: auto;" id="vocabList"></div>
-      </div>
-
-      <!-- 計算機區塊 -->
-      <div class="card">
-        <div class="card-title">🧮 輕量計算機</div>
-        <div class="calc-screen" id="calcScreen">0</div>
-        <div class="calc-grid">
-          <button class="btn-calc" onclick="calcInput('C')">C</button>
-          <button class="btn-calc" onclick="calcInput('(')">(</button>
-          <button class="btn-calc" onclick="calcInput(')')">)</button>
-          <button class="btn-calc btn-calc-op" onclick="calcInput('/')">/</button>
-          
-          <button class="btn-calc" onclick="calcInput('7')">7</button>
-          <button class="btn-calc" onclick="calcInput('8')">8</button>
-          <button class="btn-calc" onclick="calcInput('9')">9</button>
-          <button class="btn-calc btn-calc-op" onclick="calcInput('*')">*</button>
-          
-          <button class="btn-calc" onclick="calcInput('4')">4</button>
-          <button class="btn-calc" onclick="calcInput('5')">5</button>
-          <button class="btn-calc" onclick="calcInput('6')">6</button>
-          <button class="btn-calc btn-calc-op" onclick="calcInput('-')">-</button>
-          
-          <button class="btn-calc" onclick="calcInput('1')">1</button>
-          <button class="btn-calc" onclick="calcInput('2')">2</button>
-          <button class="btn-calc" onclick="calcInput('3')">3</button>
-          <button class="btn-calc btn-calc-op" onclick="calcInput('+')">+</button>
-          
-          <button class="btn-calc" onclick="calcInput('0')">0</button>
-          <button class="btn-calc" onclick="calcInput('.')">.</button>
-          <button class="btn-calc" onclick="calcBack()">⌫</button>
-          <button class="btn-calc btn-calc-op" onclick="calcEqual()">=</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    // 時間初值
+<script>
+    // 時間初始化
     const nowISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     document.getElementById('vocabDate').value = nowISO;
 
     let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
+    let chartInstance = null;
 
     function loginUser() {
-      const name = document.getElementById('usernameInput').value.trim();
-      if (!name) return;
-      currentUser = name;
-      localStorage.setItem('aura_currentUser', currentUser);
-      updateUserUI();
-      loadUserData();
+        const name = document.getElementById('usernameInput').value.trim();
+        if (!name) return;
+        currentUser = name;
+        localStorage.setItem('aura_currentUser', currentUser);
+        updateUserUI();
+        loadUserData();
     }
 
     function updateUserUI() {
-      document.getElementById('userStatus').innerText = `👤 使用者: ${currentUser}`;
+        document.getElementById('userStatus').innerText = `👤 使用者: ${currentUser}`;
     }
 
-    // --- 資料管理 ---
+    // 資料管理
     let vocabs = [];
     let timeLogs = [];
 
     function loadUserData() {
-      vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || [];
-      timeLogs = JSON.parse(localStorage.getItem(`timeLogs_${currentUser}`)) || [
-        { id: 1, name: '睡眠', start: '00:00', end: '07:00' },
-        { id: 2, name: '深度專注', start: '09:00', end: '17:00' }
-      ];
-      renderVocabs();
-      renderTimeLogs();
-      initChart();
+        vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || [];
+        timeLogs = JSON.parse(localStorage.getItem(`timeLogs_${currentUser}`)) || [
+            { id: 1, name: '睡眠', start: '00:00', end: '07:00' },
+            { id: 2, name: '深度專注', start: '09:00', end: '17:00' }
+        ];
+        renderVocabs();
+        renderTimeLogs();
+        initChart();
     }
 
     function saveUserData() {
-      localStorage.setItem(`vocabs_${currentUser}`, JSON.stringify(vocabs));
-      localStorage.setItem(`timeLogs_${currentUser}`, JSON.stringify(timeLogs));
-      renderVocabs();
-      renderTimeLogs();
+        localStorage.setItem(`vocabs_${currentUser}`, JSON.stringify(vocabs));
+        localStorage.setItem(`timeLogs_${currentUser}`, JSON.stringify(timeLogs));
+        renderVocabs();
+        renderTimeLogs();
+        initChart();
     }
 
-    // --- 時間紀錄邏輯 ---
+    // 圓盤圖表初始化 (Chart.js)
+    function initChart() {
+        const ctx = document.getElementById('habitChart');
+        if (!ctx) return;
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const labels = timeLogs.map(item => item.name);
+        const dataValues = timeLogs.map(item => {
+            if (!item.start || !item.end) return 1;
+            const s = item.start.split(':');
+            const e = item.end.split(':');
+            let mins = (parseInt(e[0]) * 60 + parseInt(e[1])) - (parseInt(s[0]) * 60 + parseInt(s[1]));
+            return mins > 0 ? mins : mins + 1440;
+        });
+
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels.length ? labels : ['無資料'],
+                datasets: [{
+                    data: dataValues.length ? dataValues : [1],
+                    backgroundColor: [
+                        '#6366f1', '#10b981', '#f59e0b', '#ef4444', 
+                        '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#f8fafc', font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+
+    // 時間紀錄管理
     function addTimeLog() {
-      const name = document.getElementById('timeItemName').value.trim();
-      const start = document.getElementById('startTime').value;
-      const end = document.getElementById('endTime').value;
+        const name = document.getElementById('timeItemName').value.trim();
+        const start = document.getElementById('startTime').value;
+        const end = document.getElementById('endTime').value;
 
-      if (!name || !start || !end) return;
+        if (!name || !start || !end) {
+            alert('請完整填寫事項名稱與時間！');
+            return;
+        }
 
-      timeLogs.push({ id: Date.now(), name, start, end });
-      document.getElementById('timeItemName').value = '';
-      saveUserData();
+        timeLogs.push({ id: Date.now(), name, start, end });
+        document.getElementById('timeItemName').value = '';
+        saveUserData();
     }
 
     function deleteTimeLog(id) {
-      timeLogs = timeLogs.filter(t => t.id !== id);
-      saveUserData();
+        timeLogs = timeLogs.filter(item => item.id !== id);
+        saveUserData();
     }
 
     function renderTimeLogs() {
-      const list = document.getElementById('timeLogList');
-      list.innerHTML = timeLogs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">無時間紀錄</p>' : '';
-
-      timeLogs.forEach(t => {
-        const el = document.createElement('div');
-        el.className = 'time-item';
-        el.innerHTML = `
-          <span>🔵 ${t.name} (${t.start}-${t.end})</span>
-          <button class="delete-btn" onclick="deleteTimeLog(${t.id})">✕</button>
-        `;
-        list.appendChild(el);
-      });
+        const container = document.getElementById('timeLogList');
+        container.innerHTML = timeLogs.map(item => `
+            <div class="vocab-item">
+                <div>
+                    <strong>${item.name}</strong> 
+                    <span style="font-size:0.8rem; color:var(--text-muted);">(${item.start} - ${item.end})</span>
+                </div>
+                <button class="delete-btn" onclick="deleteTimeLog(${item.id})">刪除</button>
+            </div>
+        `).join('');
     }
 
-    // --- 圖表 ---
-    let myChart = null;
-    function initChart() {
-      const ctx = document.getElementById('habitChart').getContext('2d');
-      if (myChart) myChart.destroy();
-
-      myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['07-31', '08-01', '08-02', '08-03', '08-04', '08-05', '08-06'],
-          datasets: [{
-            label: '專注時數',
-            data: [4, 6, 5, 7, 6, 8, 7.5],
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.2)',
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
-          }
-        }
-      });
-    }
-
-    // --- 艾賓浩斯遺忘曲線算法 ---
-    const ebbinghausStages = [
-      { name: "1. 第一遍", hours: 0 },
-      { name: "2. 1hr 後複習", hours: 1 },
-      { name: "3. 1天後複習", hours: 24 },
-      { name: "4. 2天後複習", hours: 48 },
-      { name: "5. 6天後複習", hours: 144 },
-      { name: "6. 14天後複習", hours: 336 },
-      { name: "7. 30天後複習", hours: 720 }
-    ];
-
-    function calculateNextReview(learnDateStr) {
-      const learnTime = new Date(learnDateStr).getTime();
-      const now = new Date().getTime();
-      const diffHours = (now - learnTime) / (1000 * 60 * 60);
-
-      if (isNaN(diffHours) || diffHours < 0) return "⚠️ 時間設定無效";
-
-      let nextStage = ebbinghausStages.find(s => s.hours > diffHours);
-      if (!nextStage) return "🎉 已進入長期記憶區";
-
-      const remainingHours = nextStage.hours - diffHours;
-
-      if (remainingHours <= 1) {
-        return `⚠️ 該進行「${nextStage.name}」囉！`;
-      } else if (remainingHours < 24) {
-        return `🧠 下次: ${nextStage.name} (約 ${Math.round(remainingHours)} 小時後)`;
-      } else {
-        const days = Math.round(remainingHours / 24);
-        return `🧠 下次: ${nextStage.name} (約 ${days} 天後)`;
-      }
-    }
-
-    // --- 單字本邏輯 ---
+    // 單字卡與計算機功能
     function addVocab() {
-      const word = document.getElementById('vocabWord').value.trim();
-      const meaning = document.getElementById('vocabMeaning').value.trim();
-      const date = document.getElementById('vocabDate').value;
-
-      if (!word || !meaning || !date) return;
-
-      vocabs.push({ id: Date.now(), word, meaning, date });
-      document.getElementById('vocabWord').value = '';
-      document.getElementById('vocabMeaning').value = '';
-      saveUserData();
-    }
-
-    function deleteVocab(id) {
-      vocabs = vocabs.filter(v => v.id !== id);
-      saveUserData();
+        const word = document.getElementById('vocabWord').value.trim();
+        const meaning = document.getElementById('vocabMeaning').value.trim();
+        const date = document.getElementById('vocabDate').value;
+        if (!word || !meaning) return;
+        vocabs.push({ id: Date.now(), word, meaning, date });
+        document.getElementById('vocabWord').value = '';
+        document.getElementById('vocabMeaning').value = '';
+        saveUserData();
     }
 
     function renderVocabs() {
-      const container = document.getElementById('vocabList');
-      container.innerHTML = vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">尚無單字，請新增</p>' : '';
-
-      vocabs.forEach(v => {
-        const nextReview = calculateNextReview(v.date);
-        const displayDate = v.date.replace('T', ' ');
-        const el = document.createElement('div');
-        el.className = 'vocab-item';
-        el.innerHTML = `
-          <div class="vocab-info">
-            <span class="vocab-word">${v.word} <button class="delete-btn" onclick="deleteVocab(${v.id})">✕</button></span>
-            <span class="vocab-meaning">${v.meaning}</span>
-            <span class="vocab-ebbinghaus">🗓️ 初學: ${displayDate} | ${nextReview}</span>
-          </div>
-          <button style="font-size: 0.75rem;" onclick="speakWord('${v.word}')">🔊</button>
-        `;
-        container.appendChild(el);
-      });
+        const container = document.getElementById('vocabList');
+        container.innerHTML = vocabs.map(v => `
+            <div class="vocab-item">
+                <div>
+                    <strong style="color:#a5b4fc;">${v.word}</strong> - <span>${v.meaning}</span>
+                </div>
+                <button class="delete-btn" onclick="deleteVocab(${v.id})">刪除</button>
+            </div>
+        `).join('');
     }
 
-    function speakWord(text) {
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      synth.speak(utter);
+    function deleteVocab(id) {
+        vocabs = vocabs.filter(v => v.id !== id);
+        saveUserData();
     }
 
-    // --- 測驗功能 ---
-    let currentQuizMode = '';
-    let currentQuizItem = null;
-
-    function startQuiz(mode) {
-      if (vocabs.length === 0) { alert("請先新增單字！"); return; }
-      currentQuizMode = mode;
-      document.getElementById('quizArea').style.display = 'block';
-      nextQuestion();
-    }
-
-    function nextQuestion() {
-      document.getElementById('quizResult').innerText = '';
-      currentQuizItem = vocabs[Math.floor(Math.random() * vocabs.length)];
-      const qText = document.getElementById('quizQuestion');
-      const inputArea = document.getElementById('quizInputArea');
-
-      if (currentQuizMode === 'en-zh') {
-        qText.innerText = `英文：${currentQuizItem.word}`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入中文翻譯..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'zh-en') {
-        qText.innerText = `中文：${currentQuizItem.meaning}`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入英文單字..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'audio') {
-        qText.innerText = `🔊 點擊聲音按鈕聽單字`;
-        speakWord(currentQuizItem.word);
-        inputArea.innerHTML = `
-          <button onclick="speakWord('${currentQuizItem.word}')">再次播放 🔊</button>
-          <input type="text" id="quizAnswer" placeholder="輸入聽到的英文..." style="width: 80%; margin-top: 8px;">
-        `;
-      } else if (currentQuizMode === 'spelling') {
-        qText.innerText = `拼字題：${currentQuizItem.meaning}`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="正確拼出英文..." style="width: 80%;">`;
-      }
-    }
-
-    function checkAnswer() {
-      const userAns = document.getElementById('quizAnswer').value.trim().toLowerCase();
-      const res = document.getElementById('quizResult');
-
-      let isCorrect = false;
-      if (currentQuizMode === 'en-zh') {
-        isCorrect = currentQuizItem.meaning.includes(userAns);
-      } else {
-        isCorrect = (userAns === currentQuizItem.word.toLowerCase());
-      }
-
-      if (isCorrect) {
-        res.innerHTML = `<span style="color:var(--accent);">🎉 正確！答案就是 ${currentQuizItem.word} (${currentQuizItem.meaning})</span>`;
-        setTimeout(nextQuestion, 1500);
-      } else {
-        res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！正確答案是：${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
-      }
-    }
-
-    // --- 計算機邏輯 ---
-    let calcExpr = "";
+    // 計算機邏輯
+    let calcExpr = '';
     function calcInput(val) {
-      if (val === 'C') calcExpr = "";
-      else calcExpr += val;
-      document.getElementById('calcScreen').innerText = calcExpr || "0";
+        const screen = document.getElementById('calcScreen');
+        if (val === 'C') { calcExpr = ''; screen.innerText = '0'; }
+        else if (val === '=') {
+            try { screen.innerText = eval(calcExpr) || '0'; calcExpr = screen.innerText; }
+            catch { screen.innerText = 'Error'; calcExpr = ''; }
+        } else {
+            calcExpr += val;
+            screen.innerText = calcExpr;
+        }
     }
 
-    function calcBack() {
-      calcExpr = calcExpr.slice(0, -1);
-      document.getElementById('calcScreen').innerText = calcExpr || "0";
-    }
-
-    function calcEqual() {
-      try {
-        calcExpr = eval(calcExpr).toString();
-        document.getElementById('calcScreen').innerText = calcExpr;
-      } catch (e) {
-        document.getElementById('calcScreen').innerText = "Error";
-        calcExpr = "";
-      }
-    }
-
+    // 初始化啟動
     updateUserUI();
     loadUserData();
-  </script>
+</script>
 </body>
 </html>
