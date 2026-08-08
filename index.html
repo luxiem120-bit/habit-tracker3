@@ -3,15 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura Workspace - 雲端隨機背誦與同步版</title>
+  <title>Aura Workspace - 嚴格帳號與全功能測驗版</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- 引入 Firebase 雲端 SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
   <style>
     :root {
       --bg: #f8fafc;
@@ -57,45 +51,46 @@
     .deck-card { background: var(--panel-sub); border: 1px solid var(--card-border); padding: 18px; border-radius: 14px; cursor: pointer; transition: all 0.2s; }
     .deck-card:hover { border-color: var(--purple); transform: translateY(-2px); background: #ffffff; }
 
-    /* 隨機背誦卡片區塊 */
-    .flashcard-box {
-      background: var(--panel-sub);
-      border: 2px solid var(--purple);
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      margin-bottom: 20px;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
     .pos-badge { background: var(--purple); color: #ffffff; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 600; }
     .list-item { background: var(--panel-sub); padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--card-border); }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 210px; width: 100%; }
 
-    /* Modal 彈窗 */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .modal { background: #ffffff; padding: 24px; border-radius: 16px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .quiz-box {
+      background: var(--panel-sub);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--card-border);
+    }
+
+    .flashcard-box {
+      background: var(--panel-sub);
+      border: 2px dashed var(--purple);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Modal 帳號彈窗 */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal { background: #ffffff; padding: 24px; border-radius: 16px; width: 340px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <h1>☁️ Aura Cloud Space</h1>
-      <div class="user-section">
-        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">👤 訪客模式 (本地)</span>
-        <button onclick="openAuthModal('login')">登入</button>
-        <button style="background: var(--purple);" onclick="openAuthModal('register')">註冊帳號</button>
+      <h1>✨ Aura Workspace</h1>
+      <div class="user-section" id="userSection">
+        <!-- 登入狀態動態生成 -->
       </div>
     </header>
 
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 雲端單字庫</button>
+      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 多功能單字庫</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 雙作息圓盤</button>
       <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
@@ -103,50 +98,65 @@
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 多單字本與隨機背誦卡片 -->
+    <!-- 分頁 1: 多單字本與背誦測驗 -->
     <div id="vocabTab" class="tab-content active">
       <!-- 視圖 A: 單字本庫 -->
       <div id="deckListView" class="card">
         <div class="card-title">📚 我的單字本庫</div>
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 多益高頻、日常西班牙文)" style="flex:1;">
+          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 多益高頻、西班牙文)" style="flex:1;">
           <button onclick="createDeck()">建立單字本</button>
         </div>
         <div class="deck-grid" id="deckGrid"></div>
       </div>
 
-      <!-- 視圖 B: 點進去後的隨機背誦與單字管理 -->
+      <!-- 視圖 B: 點進去後的背誦、測驗與單字管理 -->
       <div id="deckDetailView" class="card" style="display: none;">
         <div class="card-title">
           <span id="currentDeckTitle">單字本內容</span>
           <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
         </div>
 
-        <!-- 🎯 隨機背誦卡片模式 -->
-        <div class="flashcard-box">
-          <div id="quizStartArea">
-            <h3 style="margin-bottom: 10px; color: var(--primary);">🎴 隨機記憶卡背誦</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">系統將隨機打亂單字，背完一個即排除，直到所有單字背完！</p>
-            <button style="background: var(--purple); font-size: 1rem; padding: 10px 24px;" onclick="startRandomQuiz()">🚀 開始隨機背誦</button>
+        <!-- 🧠 1. 四大背誦測驗模式 (英翻中、中翻英、聽力、拼字) -->
+        <div class="quiz-box">
+          <div style="font-weight: 700; margin-bottom: 10px; color: var(--primary);">🧠 互動單字測驗模式</div>
+          <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
+            <button style="font-size: 0.8rem;" onclick="startQuiz('en-zh')">英翻中</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('zh-en')">中翻英</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('audio')">🔊 聽力測驗</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('spelling')">⌨️ 拼字測驗</button>
           </div>
+          <div id="quizArea" style="display: none; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;" id="quizQuestion">---</div>
+            <div id="quizInputArea" style="margin-bottom: 10px;"></div>
+            <button onclick="checkAnswer()">提交答案</button>
+            <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
+          </div>
+        </div>
 
-          <div id="quizActiveArea" style="display: none; width: 100%;">
-            <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 8px;" id="quizRemainingCount">剩餘單字：0</div>
-            <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 8px;" id="flashWord">---</div>
-            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;" id="flashPOS">---</div>
-            <div style="font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; display: none;" id="flashMeaning">---</div>
-
-            <div style="display: flex; gap: 10px; justify-content: center;">
+        <!-- 🎴 2. 隨機記憶卡背誦模式 -->
+        <div class="flashcard-box">
+          <div id="flashStartArea">
+            <h4 style="margin-bottom: 6px; color: var(--primary);">🎴 隨機卡片洗牌背誦</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">隨機抽卡，記住即移除，直到當前單字本背完！</p>
+            <button style="background: var(--purple);" onclick="startRandomFlashcards()">開始隨機刷卡</button>
+          </div>
+          <div id="flashActiveArea" style="display: none;">
+            <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 6px;" id="flashRemainCount">剩餘：0 個</div>
+            <div style="font-size: 1.6rem; font-weight: bold; color: var(--primary);" id="flashWord">---</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;" id="flashPOS">---</div>
+            <div style="font-size: 1.1rem; color: var(--accent); margin-bottom: 15px; display: none;" id="flashMeaning">---</div>
+            <div style="display: flex; gap: 8px; justify-content: center;">
               <button style="background: var(--accent);" onclick="toggleFlashMeaning()">👁️ 顯示中文</button>
-              <button style="background: var(--purple);" onclick="nextRandomWord(true)">✅ 背起來了 (移除)</button>
-              <button style="background: var(--danger);" onclick="nextRandomWord(false)">❌ 還沒記住 (保留)</button>
+              <button style="background: var(--purple);" onclick="nextFlashCard(true)">✅ 背起來了</button>
+              <button style="background: var(--danger);" onclick="nextFlashCard(false)">❌ 沒記住</button>
             </div>
           </div>
         </div>
 
-        <!-- 自定義單字學習時間與新增欄位 -->
+        <!-- ➕ 3. 自定義時間新增單字 -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; background: var(--panel-sub); padding: 14px; border-radius: 12px;">
-          <div style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">➕ 新增單字與自定義時間</div>
+          <div style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">➕ 新增單字與自定義學習時間</div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
             <select id="vocabPOS" style="flex:1; min-width: 90px;">
@@ -162,12 +172,12 @@
           <div style="display: flex; gap: 8px; align-items: center;">
             <label style="font-size: 0.8rem; color: var(--text-muted);">🕒 學習時間：</label>
             <input type="datetime-local" id="vocabTimeInput" style="flex:1;">
-            <button onclick="addVocab()">新增至單字本</button>
+            <button onclick="addVocab()">新增單字</button>
           </div>
         </div>
 
-        <!-- 該單字本內的單字清單 -->
-        <div style="max-height: 300px; overflow-y: auto;" id="vocabList"></div>
+        <!-- 單字列表 -->
+        <div style="max-height: 280px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
 
@@ -278,12 +288,12 @@
     </div>
   </div>
 
-  <!-- 帳號 Modal -->
+  <!-- 帳號 Modal 彈窗 -->
   <div class="modal-overlay" id="authModal">
     <div class="modal">
       <h3 style="margin-bottom: 16px; color: var(--primary);" id="modalTitle">帳號登入</h3>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <input type="email" id="authEmail" placeholder="輸入 Email 電子郵件">
+        <input type="text" id="authUsername" placeholder="輸入使用者名稱/Email">
         <input type="password" id="authPassword" placeholder="輸入密碼">
         <button onclick="handleAuthSubmit()" id="authSubmitBtn">登入</button>
         <button style="background: transparent; color: var(--text-muted); font-size: 0.8rem;" onclick="closeAuthModal()">取消</button>
@@ -292,21 +302,10 @@
   </div>
 
   <script>
-    // --- 🔑 Firebase 雲端初始化配置（預設提供公共雲端備份） ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-PlaceholderKeyForAuraApp12345",
-      authDomain: "aura-app-cloud.firebaseapp.com",
-      projectId: "aura-app-cloud",
-      storageBucket: "aura-app-cloud.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef"
-    };
-
-    // 初始化時間輸入框
     const nowISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     document.getElementById('vocabTimeInput').value = nowISO;
 
-    let currentUser = localStorage.getItem('aura_currentUser') || 'Guest';
+    let currentUser = localStorage.getItem('aura_currentUser') || null;
     let currentDeckId = null;
     let authMode = 'login';
 
@@ -328,10 +327,10 @@
       if (tabId === 'statsTab') renderStatsChart();
     }
 
-    // --- 帳號管理 ---
+    // --- 🔒 嚴格帳號驗證系統 ---
     function openAuthModal(mode) {
       authMode = mode;
-      document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入 (跨裝置同步)' : '✨ 創建新帳號';
+      document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入' : '✨ 註冊新帳號';
       document.getElementById('authSubmitBtn').innerText = mode === 'login' ? '登入' : '完成註冊';
       document.getElementById('authModal').style.display = 'flex';
     }
@@ -341,54 +340,83 @@
     }
 
     function handleAuthSubmit() {
-      const email = document.getElementById('authEmail').value.trim();
+      const user = document.getElementById('authUsername').value.trim();
       const pass = document.getElementById('authPassword').value.trim();
-      if (!email || !pass) { alert("請填寫完整的 Email 與密碼！"); return; }
 
-      let usersDB = JSON.parse(localStorage.getItem('aura_cloud_users')) || {};
+      if (!user || !pass) { alert("請填寫帳號與密碼！"); return; }
+
+      let usersDB = JSON.parse(localStorage.getItem('aura_users_db')) || {};
 
       if (authMode === 'register') {
-        usersDB[email] = pass;
-        localStorage.setItem('aura_cloud_users', JSON.stringify(usersDB));
-        alert("🎉 帳號創建成功！已為您啟用跨裝置同步！");
+        if (usersDB[user]) { alert("❌ 此帳號名稱已被註冊，請換一個或直接登入！"); return; }
+        usersDB[user] = pass;
+        localStorage.setItem('aura_users_db', JSON.stringify(usersDB));
+        alert("🎉 註冊成功！已自動登入！");
       } else {
-        if (usersDB[email] && usersDB[email] !== pass) { alert("密碼不正確！"); return; }
+        // 嚴格檢查：未註冊無法登入
+        if (!usersDB[user]) {
+          alert("❌ 該帳號不存在，請先點擊「註冊帳號」！");
+          return;
+        }
+        if (usersDB[user] !== pass) {
+          alert("❌ 密碼錯誤，請重新輸入！");
+          return;
+        }
       }
 
-      currentUser = email;
+      currentUser = user;
       localStorage.setItem('aura_currentUser', currentUser);
       updateUserUI();
       loadUserData();
       closeAuthModal();
     }
 
-    function updateUserUI() {
-      document.getElementById('userStatus').innerText = currentUser === 'Guest' ? `👤 訪客模式 (本地)` : `☁️ 雲端帳號: ${currentUser}`;
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem('aura_currentUser');
+      updateUserUI();
+      loadUserData();
     }
 
-    // --- 資料結構 ---
-    let decks = [];
-    let habits = [];
-    let todos = [];
-    let targetLogs = [];
-    let actualLogs = [];
+    function updateUserUI() {
+      const sec = document.getElementById('userSection');
+      if (currentUser) {
+        sec.innerHTML = `
+          <span style="font-size: 0.85rem; color: var(--text-muted);">👤 已登入: <strong>${currentUser}</strong></span>
+          <button style="background: var(--danger);" onclick="logoutUser()">🚪 登出</button>
+        `;
+      } else {
+        sec.innerHTML = `
+          <span style="font-size: 0.85rem; color: var(--danger);">未登入 (無紀錄)</span>
+          <button onclick="openAuthModal('login')">登入</button>
+          <button style="background: var(--purple);" onclick="openAuthModal('register')">註冊帳號</button>
+        `;
+      }
+    }
+
+    // --- 資料結構與載入 ---
+    let decks = [], habits = [], todos = [], targetLogs = [], actualLogs = [];
 
     function loadUserData() {
-      decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [
-        {
-          id: 1,
-          name: "預設常用單字本",
-          vocabs: [
-            { id: 101, word: 'apple', pos: 'n.', meaning: '蘋果', learnedTime: nowISO },
-            { id: 102, word: 'focus', pos: 'v.', meaning: '專注', learnedTime: nowISO },
-            { id: 103, word: 'habit', pos: 'n.', meaning: '習慣', learnedTime: nowISO }
-          ]
-        }
-      ];
-      habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
-      todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成今天的學習打卡", done: false }];
-      targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
-      actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
+      if (!currentUser) {
+        decks = []; habits = []; todos = []; targetLogs = []; actualLogs = [];
+      } else {
+        decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [
+          {
+            id: 1,
+            name: "預設基礎單字本",
+            vocabs: [
+              { id: 101, word: 'apple', pos: 'n.', meaning: '蘋果', learnedTime: nowISO },
+              { id: 102, word: 'focus', pos: 'v.', meaning: '專注', learnedTime: nowISO },
+              { id: 103, word: 'habit', pos: 'n.', meaning: '習慣', learnedTime: nowISO }
+            ]
+          }
+        ];
+        habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
+        todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
+        targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
+        actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
+      }
 
       renderDecks();
       renderHabits();
@@ -398,6 +426,7 @@
     }
 
     function saveUserData() {
+      if (!currentUser) { alert("請先登入後再進行編輯存檔！"); return; }
       localStorage.setItem(`decks_${currentUser}`, JSON.stringify(decks));
       localStorage.setItem(`habits_${currentUser}`, JSON.stringify(habits));
       localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
@@ -412,7 +441,7 @@
       if (currentDeckId) renderDeckDetail();
     }
 
-    // --- 單字本與隨機背誦邏輯 ---
+    // --- 多單字本邏輯 ---
     function createDeck() {
       const name = document.getElementById('newDeckName').value.trim();
       if (!name) return;
@@ -431,7 +460,9 @@
       currentDeckId = id;
       document.getElementById('deckListView').style.display = 'none';
       document.getElementById('deckDetailView').style.display = 'block';
-      resetQuizUI();
+      document.getElementById('quizArea').style.display = 'none';
+      document.getElementById('flashStartArea').style.display = 'block';
+      document.getElementById('flashActiveArea').style.display = 'none';
       renderDeckDetail();
     }
 
@@ -444,7 +475,7 @@
 
     function renderDecks() {
       const grid = document.getElementById('deckGrid');
-      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">目前尚無單字本！</p>' : '';
+      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">目前尚無單字本，請先登入或建立新單字本！</p>' : '';
       grid.innerHTML = decks.map(d => `
         <div class="deck-card" onclick="openDeck(${d.id})">
           <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
@@ -497,38 +528,85 @@
       saveUserData();
     }
 
-    // --- 🎴 隨機記憶卡背誦模式邏輯 ---
-    let quizQueue = [];
-    let currentQuizWord = null;
+    // --- 🧠 四大互動單字測驗模式 (英翻中、中翻英、聽力、拼字) ---
+    let currentQuizMode = '', currentQuizItem = null;
 
-    function resetQuizUI() {
-      document.getElementById('quizStartArea').style.display = 'block';
-      document.getElementById('quizActiveArea').style.display = 'none';
+    function startQuiz(mode) {
+      const deck = decks.find(d => d.id === currentDeckId);
+      if (!deck || deck.vocabs.length === 0) { alert("此單字本尚無單字可供測驗！"); return; }
+      currentQuizMode = mode;
+      document.getElementById('quizArea').style.display = 'block';
+      nextQuizQuestion();
     }
 
-    function startRandomQuiz() {
+    function nextQuizQuestion() {
+      const deck = decks.find(d => d.id === currentDeckId);
+      document.getElementById('quizResult').innerText = '';
+      currentQuizItem = deck.vocabs[Math.floor(Math.random() * deck.vocabs.length)];
+      const qText = document.getElementById('quizQuestion');
+      const inputArea = document.getElementById('quizInputArea');
+
+      if (currentQuizMode === 'en-zh') {
+        qText.innerText = `英文：[${currentQuizItem.pos}] ${currentQuizItem.word}`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入中文翻譯..." style="width: 80%;">`;
+      } else if (currentQuizMode === 'zh-en') {
+        qText.innerText = `中文：${currentQuizItem.meaning} (${currentQuizItem.pos})`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入英文單字..." style="width: 80%;">`;
+      } else if (currentQuizMode === 'audio') {
+        qText.innerText = `🔊 聽力測試 (${currentQuizItem.pos})`;
+        speakWord(currentQuizItem.word);
+        inputArea.innerHTML = `<button onclick="speakWord('${currentQuizItem.word}')">再次播放 🔊</button><br><input type="text" id="quizAnswer" placeholder="輸入聽到的英文..." style="width: 80%; margin-top: 8px;">`;
+      } else if (currentQuizMode === 'spelling') {
+        qText.innerText = `拼字：${currentQuizItem.meaning} [${currentQuizItem.pos}]`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="正確拼出英文..." style="width: 80%;">`;
+      }
+    }
+
+    function speakWord(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      synth.speak(utter);
+    }
+
+    function checkAnswer() {
+      const userAns = document.getElementById('quizAnswer').value.trim().toLowerCase();
+      const res = document.getElementById('quizResult');
+      let isCorrect = (currentQuizMode === 'en-zh') ? currentQuizItem.meaning.includes(userAns) : (userAns === currentQuizItem.word.toLowerCase());
+
+      if (isCorrect) {
+        res.innerHTML = `<span style="color:var(--accent);">🎉 正確！${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+        setTimeout(nextQuizQuestion, 1200);
+      } else {
+        res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！正確答案：${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+      }
+    }
+
+    // --- 🎴 隨機卡片洗牌背誦模式 ---
+    let flashQueue = [];
+    function startRandomFlashcards() {
       const deck = decks.find(d => d.id === currentDeckId);
       if (!deck || deck.vocabs.length === 0) { alert("此單字本內沒有單字可背誦！"); return; }
 
-      // 洗牌演算法 (Shuffle)
-      quizQueue = [...deck.vocabs].sort(() => Math.random() - 0.5);
-      document.getElementById('quizStartArea').style.display = 'none';
-      document.getElementById('quizActiveArea').style.display = 'block';
-      showNextQuizCard();
+      flashQueue = [...deck.vocabs].sort(() => Math.random() - 0.5);
+      document.getElementById('flashStartArea').style.display = 'none';
+      document.getElementById('flashActiveArea').style.display = 'block';
+      showNextFlashCard();
     }
 
-    function showNextQuizCard() {
-      if (quizQueue.length === 0) {
-        alert("🎉 恭喜你！當前單字本的所有單字已經全部背完囉！");
-        resetQuizUI();
+    function showNextFlashCard() {
+      if (flashQueue.length === 0) {
+        alert("🎉 太棒了！當前單字本的所有單字已經全部背完囉！");
+        document.getElementById('flashStartArea').style.display = 'block';
+        document.getElementById('flashActiveArea').style.display = 'none';
         return;
       }
 
-      currentQuizWord = quizQueue[0];
-      document.getElementById('quizRemainingCount').innerText = `剩餘單字：${quizQueue.length} 個`;
-      document.getElementById('flashWord').innerText = currentQuizWord.word;
-      document.getElementById('flashPOS').innerText = `[${currentQuizWord.pos}]`;
-      document.getElementById('flashMeaning').innerText = currentQuizWord.meaning;
+      const item = flashQueue[0];
+      document.getElementById('flashRemainCount').innerText = `剩餘單字：${flashQueue.length} 個`;
+      document.getElementById('flashWord').innerText = item.word;
+      document.getElementById('flashPOS').innerText = `[${item.pos}]`;
+      document.getElementById('flashMeaning').innerText = item.meaning;
       document.getElementById('flashMeaning').style.display = 'none';
     }
 
@@ -537,17 +615,15 @@
       m.style.display = m.style.display === 'none' ? 'block' : 'none';
     }
 
-    function nextRandomWord(remembered) {
+    function nextFlashCard(remembered) {
       if (remembered) {
-        // 答對了：從佇列中移除
-        quizQueue.shift();
+        flashQueue.shift();
       } else {
-        // 還沒記住：移到隊尾重新隨機背誦
-        const item = quizQueue.shift();
-        quizQueue.push(item);
-        quizQueue.sort(() => Math.random() - 0.5);
+        const item = flashQueue.shift();
+        flashQueue.push(item);
+        flashQueue.sort(() => Math.random() - 0.5);
       }
-      showNextQuizCard();
+      showNextFlashCard();
     }
 
     // --- 雙作息圓盤 ---
@@ -600,7 +676,7 @@
       setInstance(newInst);
     }
 
-    // --- 習慣追蹤與 To-Do ---
+    // --- 習慣與 To-Do ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
