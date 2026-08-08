@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura Workspace - 帳號與單字本完整版</title>
+  <title>Aura Workspace - 多單字本完整版</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -150,6 +150,28 @@
       border: 1px solid var(--card-border);
     }
 
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .deck-card {
+      background: var(--panel-sub);
+      border: 1px solid var(--card-border);
+      padding: 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .deck-card:hover {
+      border-color: var(--purple);
+      transform: translateY(-2px);
+      background: #ffffff;
+    }
+
     .pos-badge {
       background: var(--purple);
       color: #ffffff;
@@ -224,7 +246,6 @@
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 210px; width: 100%; }
 
-    /* 帳號 Modal 彈窗 */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -256,7 +277,7 @@
     </header>
 
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 背單字與測驗</button>
+      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 多功能單字庫</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 雙作息圓盤</button>
       <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
@@ -264,10 +285,24 @@
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 背單字與測驗 -->
+    <!-- 分頁 1: 多單字本庫 -->
     <div id="vocabTab" class="tab-content active">
-      <div class="card">
-        <div class="card-title">📖 艾賓浩斯 7 階段背單字與測驗</div>
+      <!-- 視圖 A: 單字本清單 -->
+      <div id="deckListView" class="card">
+        <div class="card-title">📚 我的單字本庫</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 多益高頻、日常日文)" style="flex:1;">
+          <button onclick="createDeck()">建立單字本</button>
+        </div>
+        <div class="deck-grid" id="deckGrid"></div>
+      </div>
+
+      <!-- 視圖 B: 點進去後的單字細節與測驗 -->
+      <div id="deckDetailView" class="card" style="display: none;">
+        <div class="card-title">
+          <span id="currentDeckTitle">單字本內容</span>
+          <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
+        </div>
 
         <!-- 測驗區域 -->
         <div class="quiz-box">
@@ -286,10 +321,10 @@
           </div>
         </div>
 
-        <!-- 新增單字輸入區 -->
+        <!-- 新增單字欄位 (點進去才新增) -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <input type="text" id="vocabWord" placeholder="英文單字 (如: apple)" style="flex:2; min-width: 120px;">
+            <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
             <select id="vocabPOS" style="flex:1; min-width: 90px;">
               <option value="n.">n. 名詞</option>
               <option value="v.">v. 動詞</option>
@@ -299,12 +334,12 @@
               <option value="conj.">conj. 連接詞</option>
               <option value="phr.">phr. 片語</option>
             </select>
-            <input type="text" id="vocabMeaning" placeholder="中文解釋 (如: 蘋果)" style="flex:2; min-width: 120px;">
+            <input type="text" id="vocabMeaning" placeholder="中文解釋" style="flex:2; min-width: 120px;">
             <button onclick="addVocab()">新增單字</button>
           </div>
         </div>
 
-        <!-- 單字列表 -->
+        <!-- 該單字本內的單字與 7 階段勾選 -->
         <div style="max-height: 380px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
@@ -416,7 +451,7 @@
     </div>
   </div>
 
-  <!-- 帳號彈窗 Modal -->
+  <!-- 帳號 Modal -->
   <div class="modal-overlay" id="authModal">
     <div class="modal">
       <h3 style="margin-bottom: 16px; color: var(--primary);" id="modalTitle">帳號登入</h3>
@@ -432,7 +467,8 @@
 
   <script>
     let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
-    let authMode = 'login'; // 'login' 或 'register'
+    let currentDeckId = null;
+    let authMode = 'login';
 
     let targetWheelChartInstance = null;
     let actualWheelChartInstance = null;
@@ -441,14 +477,6 @@
 
     const todayStr = new Date().toISOString().split('T')[0];
     const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
-
-    // 內建預設單字庫
-    const defaultVocabs = [
-      { id: 1, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] },
-      { id: 2, word: 'focus', pos: 'v.', meaning: '專注', steps: [true, false, false, false, false, false, false] },
-      { id: 3, word: 'habit', pos: 'n.', meaning: '習慣', steps: [true, true, true, false, false, false, false] },
-      { id: 4, word: 'achieve', pos: 'v.', meaning: '達成', steps: [false, false, false, false, false, false, false] }
-    ];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -461,7 +489,6 @@
       if (tabId === 'statsTab') renderStatsChart();
     }
 
-    // --- 帳號管理邏輯 ---
     function openAuthModal(mode) {
       authMode = mode;
       document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入' : '✨ 創建新帳號';
@@ -480,19 +507,16 @@
       const confirmPass = document.getElementById('authConfirmPassword').value.trim();
 
       if (!user || !pass) { alert("請填寫帳號與密碼！"); return; }
-
       let usersDB = JSON.parse(localStorage.getItem('aura_users_db')) || {};
 
       if (authMode === 'register') {
         if (pass !== confirmPass) { alert("兩次密碼輸入不一致！"); return; }
-        if (usersDB[user]) { alert("此帳號名稱已存在！"); return; }
+        if (usersDB[user]) { alert("此帳號已存在！"); return; }
         usersDB[user] = pass;
         localStorage.setItem('aura_users_db', JSON.stringify(usersDB));
         alert("🎉 註冊成功！已自動登入！");
       } else {
-        if (usersDB[user] && usersDB[user] !== pass) {
-          alert("密碼錯誤！"); return;
-        }
+        if (usersDB[user] && usersDB[user] !== pass) { alert("密碼錯誤！"); return; }
       }
 
       currentUser = user;
@@ -506,20 +530,29 @@
       document.getElementById('userStatus').innerText = `👤 使用者: ${currentUser}`;
     }
 
-    let vocabs = [];
+    let decks = [];
     let habits = [];
     let todos = [];
     let targetLogs = [];
     let actualLogs = [];
 
     function loadUserData() {
-      vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || defaultVocabs;
+      decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [
+        {
+          id: 1,
+          name: "預設基礎單字本",
+          vocabs: [
+            { id: 101, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] },
+            { id: 102, word: 'focus', pos: 'v.', meaning: '專注', steps: [true, false, false, false, false, false, false] }
+          ]
+        }
+      ];
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
       todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
       targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
       actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
 
-      renderVocabs();
+      renderDecks();
       renderHabits();
       renderTodos();
       renderDoubleWheels();
@@ -527,51 +560,74 @@
     }
 
     function saveUserData() {
-      localStorage.setItem(`vocabs_${currentUser}`, JSON.stringify(vocabs));
+      localStorage.setItem(`decks_${currentUser}`, JSON.stringify(decks));
       localStorage.setItem(`habits_${currentUser}`, JSON.stringify(habits));
       localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
       localStorage.setItem(`targetLogs_${currentUser}`, JSON.stringify(targetLogs));
       localStorage.setItem(`actualLogs_${currentUser}`, JSON.stringify(actualLogs));
 
-      renderVocabs();
+      renderDecks();
       renderHabits();
       renderTodos();
       renderDoubleWheels();
       renderHabitCharts();
+      if (currentDeckId) renderDeckDetail();
     }
 
-    // --- 單字與 7 階段打卡 ---
-    function addVocab() {
-      const word = document.getElementById('vocabWord').value.trim();
-      const pos = document.getElementById('vocabPOS').value;
-      const meaning = document.getElementById('vocabMeaning').value.trim();
-      if (!word || !meaning) return;
-
-      vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
-      document.getElementById('vocabWord').value = '';
-      document.getElementById('vocabMeaning').value = '';
+    // --- 多單字本架構 ---
+    function createDeck() {
+      const name = document.getElementById('newDeckName').value.trim();
+      if (!name) return;
+      decks.push({ id: Date.now(), name, vocabs: [] });
+      document.getElementById('newDeckName').value = '';
       saveUserData();
     }
 
-    function toggleEbStep(vocabId, stepIndex) {
-      const v = vocabs.find(item => item.id === vocabId);
-      if (v) {
-        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
-        v.steps[stepIndex] = !v.steps[stepIndex];
-      }
+    function deleteDeck(id, event) {
+      event.stopPropagation();
+      decks = decks.filter(d => d.id !== id);
       saveUserData();
     }
 
-    function deleteVocab(vocabId) {
-      vocabs = vocabs.filter(item => item.id !== vocabId);
-      saveUserData();
+    function openDeck(id) {
+      currentDeckId = id;
+      document.getElementById('deckListView').style.display = 'none';
+      document.getElementById('deckDetailView').style.display = 'block';
+      renderDeckDetail();
     }
 
-    function renderVocabs() {
-      const list = document.getElementById('vocabList');
-      list.innerHTML = vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前無單字，請新增！</p>' : '';
+    function backToDecks() {
+      currentDeckId = null;
+      document.getElementById('deckDetailView').style.display = 'none';
+      document.getElementById('deckListView').style.display = 'block';
+      renderDecks();
+    }
+
+    function renderDecks() {
+      const grid = document.getElementById('deckGrid');
+      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">目前沒有單字本，請新增！</p>' : '';
+      grid.innerHTML = decks.map(d => `
+        <div class="deck-card" onclick="openDeck(${d.id})">
+          <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+            <span>${d.vocabs.length} 個單字</span>
+            <button class="btn-delete" onclick="deleteDeck(${d.id}, event)">刪除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- 單字本內部邏輯 ---
+    function renderDeckDetail() {
+      const deck = decks.find(d => d.id === currentDeckId);
+      if (!deck) return;
+
+      document.getElementById('currentDeckTitle').innerText = `📖 ${deck.name}`;
       
-      list.innerHTML = vocabs.map(v => {
+      const list = document.getElementById('vocabList');
+      list.innerHTML = deck.vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">此單字本尚無單字，請在上方新增！</p>' : '';
+      
+      list.innerHTML = deck.vocabs.map(v => {
         const stepsHtml = ebStages.map((stage, idx) => {
           const isChecked = v.steps && v.steps[idx];
           return `<span class="eb-step ${isChecked ? 'checked' : ''}" onclick="toggleEbStep(${v.id}, ${idx})">${isChecked ? '✓' : '○'} ${stage}</span>`;
@@ -592,18 +648,49 @@
       }).join('');
     }
 
-    // 測驗功能
+    function addVocab() {
+      const word = document.getElementById('vocabWord').value.trim();
+      const pos = document.getElementById('vocabPOS').value;
+      const meaning = document.getElementById('vocabMeaning').value.trim();
+      if (!word || !meaning || !currentDeckId) return;
+
+      const deck = decks.find(d => d.id === currentDeckId);
+      deck.vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
+      document.getElementById('vocabWord').value = '';
+      document.getElementById('vocabMeaning').value = '';
+      saveUserData();
+    }
+
+    function toggleEbStep(vocabId, stepIndex) {
+      const deck = decks.find(d => d.id === currentDeckId);
+      const v = deck.vocabs.find(item => item.id === vocabId);
+      if (v) {
+        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
+        v.steps[stepIndex] = !v.steps[stepIndex];
+      }
+      saveUserData();
+    }
+
+    function deleteVocab(vocabId) {
+      const deck = decks.find(d => d.id === currentDeckId);
+      deck.vocabs = deck.vocabs.filter(item => item.id !== vocabId);
+      saveUserData();
+    }
+
+    // 測驗邏輯
     let currentQuizMode = '', currentQuizItem = null;
     function startQuiz(mode) {
-      if (vocabs.length === 0) { alert("請先新增單字！"); return; }
+      const deck = decks.find(d => d.id === currentDeckId);
+      if (!deck || deck.vocabs.length === 0) { alert("此單字本尚無單字可供測驗！"); return; }
       currentQuizMode = mode;
       document.getElementById('quizArea').style.display = 'block';
       nextQuestion();
     }
 
     function nextQuestion() {
+      const deck = decks.find(d => d.id === currentDeckId);
       document.getElementById('quizResult').innerText = '';
-      currentQuizItem = vocabs[Math.floor(Math.random() * vocabs.length)];
+      currentQuizItem = deck.vocabs[Math.floor(Math.random() * deck.vocabs.length)];
       const qText = document.getElementById('quizQuestion');
       const inputArea = document.getElementById('quizInputArea');
 
