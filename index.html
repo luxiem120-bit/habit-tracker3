@@ -3,28 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura - 群青空間 Workspace</title>
+  <title>Aura - 淺色群青空間 Workspace</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* 群青に眠る Color Palette */
-      --silent-navy: #102a6b;
-      --sandy-amber: #cea273;
-      --blue-current: #015185;
-      --soft-blue: #5990c0;
-      --light-cream: #fcedd3;
-      
-      --bg: #0a1738;
-      --panel: #102a6b;
-      --panel-light: #163684;
-      --card-border: #5990c0;
-      --primary: #cea273;
-      --primary-hover: #b88d5e;
-      --accent: #fcedd3;
-      --text: #fcedd3;
-      --text-muted: #a3b8d4;
-      --danger: #e76f51;
+      /* 淺色群青調色盤 Light Blue Palette */
+      --bg: #f1f5f9;                 /* 明亮淺灰藍底色 */
+      --panel: #ffffff;              /* 純白卡片 */
+      --panel-secondary: #e2e8f0;    /* 柔和次要卡片 */
+      --card-border: #cbd5e1;        /* 淺藍灰邊框 */
+      --primary: #1e40af;            /* 群青藍主色 */
+      --primary-hover: #1d4ed8;
+      --sandy-gold: #d97706;         /* 琥珀金標示 */
+      --accent: #0284c7;             /* 晴空藍 */
+      --text: #0f172a;               /* 深色文字 */
+      --text-muted: #64748b;         /* 灰色次要文字 */
+      --danger: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -32,8 +27,8 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(at 10% 10%, rgba(1, 81, 133, 0.4) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(206, 162, 115, 0.15) 0px, transparent 50%);
+        radial-gradient(at 10% 10%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(217, 119, 6, 0.06) 0px, transparent 50%);
       background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
@@ -54,14 +49,14 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 12px;
-      border-bottom: 1px solid rgba(89, 144, 192, 0.3);
+      border-bottom: 2px solid var(--card-border);
     }
 
     header h1 {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--sandy-amber);
-      letter-spacing: 1px;
+      color: var(--primary);
+      letter-spacing: 0.5px;
     }
 
     .user-section {
@@ -74,7 +69,7 @@
     .tab-nav {
       display: flex;
       gap: 8px;
-      background: rgba(16, 42, 107, 0.8);
+      background: #e2e8f0;
       padding: 6px;
       border-radius: 12px;
       border: 1px solid var(--card-border);
@@ -95,10 +90,10 @@
       white-space: nowrap;
     }
 
-    .tab-btn:hover { color: var(--light-cream); }
+    .tab-btn:hover { color: var(--primary); }
     .tab-btn.active {
-      background: var(--sandy-amber);
-      color: var(--silent-navy);
+      background: var(--primary);
+      color: #ffffff;
       font-weight: 700;
     }
 
@@ -113,19 +108,18 @@
     }
 
     .card {
-      background: rgba(16, 42, 107, 0.7);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(89, 144, 192, 0.4);
+      background: var(--panel);
+      border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
 
     .card-title {
       font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 16px;
-      color: var(--sandy-amber);
+      color: var(--primary);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -139,35 +133,35 @@
     }
 
     input, select {
-      background: rgba(10, 23, 56, 0.8);
+      background: #f8fafc;
       border: 1px solid var(--card-border);
-      color: var(--light-cream);
+      color: var(--text);
       padding: 9px 12px;
     }
 
-    input:focus, select:focus { border-color: var(--sandy-amber); }
+    input:focus, select:focus { border-color: var(--primary); }
 
     button {
-      background: var(--sandy-amber);
-      color: var(--silent-navy);
+      background: var(--primary);
+      color: #ffffff;
       border: none;
       padding: 9px 16px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     button:hover { background: var(--primary-hover); }
 
     /* 清單項目 */
     .list-item {
-      background: rgba(10, 23, 56, 0.6);
+      background: #f8fafc;
       padding: 12px 14px;
       border-radius: 10px;
       margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid rgba(89, 144, 192, 0.2);
+      border: 1px solid var(--card-border);
     }
 
     .list-item.done span {
@@ -184,7 +178,7 @@
     }
 
     .deck-card {
-      background: rgba(10, 23, 56, 0.6);
+      background: #f8fafc;
       border: 1px solid var(--card-border);
       padding: 16px;
       border-radius: 12px;
@@ -193,13 +187,13 @@
     }
 
     .deck-card:hover {
-      border-color: var(--sandy-amber);
+      border-color: var(--primary);
       transform: translateY(-2px);
     }
 
     .pos-badge {
-      background: var(--blue-current);
-      color: var(--light-cream);
+      background: var(--accent);
+      color: #ffffff;
       font-size: 0.75rem;
       padding: 2px 6px;
       border-radius: 4px;
@@ -208,12 +202,21 @@
     }
 
     .quiz-box {
-      background: rgba(10, 23, 56, 0.8);
+      background: #f8fafc;
       border-radius: 12px;
       padding: 16px;
       text-align: center;
       margin-top: 15px;
       border: 1px solid var(--card-border);
+    }
+
+    /* 統計面板小框 */
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
     }
 
     /* 計算機 */
@@ -226,9 +229,9 @@
 
     .calc-screen {
       grid-column: span 4;
-      background: rgba(10, 23, 56, 0.9);
+      background: #f8fafc;
       border: 1px solid var(--card-border);
-      color: var(--sandy-amber);
+      color: var(--primary);
       font-family: monospace;
       font-size: 1.8rem;
       text-align: right;
@@ -237,16 +240,16 @@
     }
 
     .btn-calc {
-      background: rgba(255, 255, 255, 0.05);
+      background: #f1f5f9;
       color: var(--text);
       padding: 14px;
       font-size: 1.1rem;
     }
 
-    .btn-calc-op { background: var(--blue-current); color: var(--light-cream); }
+    .btn-calc-op { background: var(--primary); color: #ffffff; }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 260px; width: 100%; }
-    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sandy-amber); }
+    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
   </style>
 </head>
 <body>
@@ -264,7 +267,7 @@
     <!-- 分頁選單 -->
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 詞性單字本</button>
-      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤</button>
+      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 作息輪盤</button>
       <button class="tab-btn" onclick="switchTab('statsTab')">📊 數據分析</button>
@@ -292,9 +295,9 @@
           <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
         </div>
 
-        <div style="font-size: 0.85rem; color: var(--sandy-amber); margin-bottom: 12px;" id="deckProgress">學習進度：0%</div>
+        <div style="font-size: 0.85rem; color: var(--sandy-gold); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
 
-        <!-- 新增單字 (包含詞性選擇) -->
+        <!-- 新增單字 (含詞性) -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
@@ -337,15 +340,43 @@
       </div>
     </div>
 
-    <!-- 分頁 2: 習慣追蹤 (Habit Tracker) -->
+    <!-- 分頁 2: 習慣追蹤與統計數據比較 -->
     <div id="habitTab" class="tab-content">
-      <div class="card">
-        <div class="card-title">🔥 每日習慣追蹤 (Habit Tracker)</div>
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-          <input type="text" id="habitInput" placeholder="新增習慣 (例如: 每日背 10 個單字)..." style="flex: 1;">
-          <button onclick="addHabit()">新增習慣</button>
+      <div class="grid-2">
+        <!-- 習慣打卡清單 -->
+        <div class="card">
+          <div class="card-title">🔥 每日習慣追蹤 (Habit Tracker)</div>
+          <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+            <input type="text" id="habitInput" placeholder="新增習慣 (例如: 每日背 10 個單字)..." style="flex: 1;">
+            <button onclick="addHabit()">新增</button>
+          </div>
+          <div id="habitList" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
-        <div id="habitList" style="max-height: 350px; overflow-y: auto;"></div>
+
+        <!-- 習慣統計與天數比較圖表 -->
+        <div class="card">
+          <div class="card-title">📊 習慣打卡天數比較</div>
+          
+          <!-- 頂部三個數據指標 -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+            <div class="stat-box">
+              <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary);" id="statTotalHabits">0</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">習慣總數</div>
+            </div>
+            <div class="stat-box">
+              <div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);" id="statTodayCheckRate">0%</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">今日打卡率</div>
+            </div>
+            <div class="stat-box">
+              <div style="font-size: 1.2rem; font-weight: bold; color: var(--sandy-gold);" id="statMaxStreak">0天</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">最高連續</div>
+            </div>
+          </div>
+
+          <div class="chart-container" style="height: 180px;">
+            <canvas id="habitCompareChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -429,7 +460,6 @@
   </div>
 
   <script>
-    // 初始化時間
     const nowISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     document.getElementById('vocabDate').value = nowISO;
 
@@ -437,6 +467,7 @@
     let currentDeckId = null;
     let wheelChartInstance = null;
     let statsChartInstance = null;
+    let habitCompareChartInstance = null;
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -444,6 +475,7 @@
       document.getElementById(tabId).classList.add('active');
       event.target.classList.add('active');
 
+      if (tabId === 'habitTab') renderHabitCompareChart();
       if (tabId === 'timeTab') renderWheelChart();
       if (tabId === 'statsTab') renderStatsChart();
     }
@@ -474,7 +506,8 @@
         { id: 1, name: "預設單字本", vocabs: [] }
       ];
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [
-        { id: 1, name: "每日背單字 15 分鐘", streak: 1, lastChecked: "" }
+        { id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: todayStr },
+        { id: 2, name: "喝水 2000cc", streak: 5, lastChecked: "" }
       ];
       todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [
         { id: 1, text: "完成今天的學習打卡", done: false }
@@ -488,6 +521,7 @@
       renderTodos();
       renderTimeLogs();
       renderWheelChart();
+      renderHabitCompareChart();
     }
 
     function saveUserData() {
@@ -499,6 +533,7 @@
       renderHabits();
       renderTodos();
       renderTimeLogs();
+      renderHabitCompareChart();
       if (currentDeckId) renderDeckDetail();
     }
 
@@ -536,7 +571,7 @@
       grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">無單字本，請新增</p>' : '';
       grid.innerHTML = decks.map(d => `
         <div class="deck-card" onclick="openDeck(${d.id})">
-          <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--sandy-amber);">📖 ${d.name}</div>
+          <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
           <div style="font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
             <span>${d.vocabs.length} 個單字</span>
             <button class="btn-delete" onclick="deleteDeck(${d.id}, event)">刪除</button>
@@ -564,7 +599,7 @@
             <input type="checkbox" class="checkbox-custom" ${v.done ? 'checked' : ''} onchange="toggleVocabDone(${v.id})">
             <div>
               <span class="pos-badge">${v.pos || 'n.'}</span>
-              <strong style="color:var(--sandy-amber);">${v.word}</strong> - <span>${v.meaning}</span>
+              <strong style="color:var(--primary);">${v.word}</strong> - <span>${v.meaning}</span>
               <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${calculateNextReview(v.date)}</div>
             </div>
           </div>
@@ -675,14 +710,14 @@
       let isCorrect = (currentQuizMode === 'en-zh') ? currentQuizItem.meaning.includes(userAns) : (userAns === currentQuizItem.word.toLowerCase());
 
       if (isCorrect) {
-        res.innerHTML = `<span style="color:var(--sandy-amber);">🎉 正確！[${currentQuizItem.pos}] ${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+        res.innerHTML = `<span style="color:var(--primary);">🎉 正確！[${currentQuizItem.pos}] ${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
         setTimeout(nextQuestion, 1500);
       } else {
         res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！正確答案：[${currentQuizItem.pos}] ${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
       }
     }
 
-    // --- 習慣追蹤 (Habit Tracker) ---
+    // --- 習慣追蹤 (Habit Tracker) & 數據統計圖表 ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
@@ -716,13 +751,13 @@
         return `
           <div class="list-item">
             <div>
-              <strong style="color:var(--sandy-amber);">${h.name}</strong>
+              <strong style="color:var(--primary);">${h.name}</strong>
               <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
-                🔥 連續打卡：<span style="color:var(--light-cream); font-weight:bold;">${h.streak}</span> 天
+                🔥 連續打卡：<span style="color:var(--sandy-gold); font-weight:bold;">${h.streak}</span> 天
               </div>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <button style="font-size:0.8rem; ${isCheckedToday ? 'background:var(--blue-current); color:var(--light-cream); cursor:default;' : ''}" onclick="checkInHabit(${h.id})">
+              <button style="font-size:0.8rem; ${isCheckedToday ? 'background:var(--card-border); color:var(--text-muted); cursor:default;' : ''}" onclick="checkInHabit(${h.id})">
                 ${isCheckedToday ? '✅ 今日已打卡' : '📌 每日打卡'}
               </button>
               <button class="btn-delete" onclick="deleteHabit(${h.id})">✕</button>
@@ -730,6 +765,49 @@
           </div>
         `;
       }).join('');
+    }
+
+    // 繪製習慣打卡天數比較圖表 (Bar Chart)
+    function renderHabitCompareChart() {
+      // 計算指標數據
+      document.getElementById('statTotalHabits').innerText = habits.length;
+      const checkedTodayCount = habits.filter(h => h.lastChecked === todayStr).length;
+      const rate = habits.length === 0 ? 0 : Math.round((checkedTodayCount / habits.length) * 100);
+      document.getElementById('statTodayCheckRate').innerText = `${rate}%`;
+
+      const maxStreak = habits.length === 0 ? 0 : Math.max(...habits.map(h => h.streak));
+      document.getElementById('statMaxStreak').innerText = `${maxStreak}天`;
+
+      const ctx = document.getElementById('habitCompareChart');
+      if (!ctx) return;
+      if (habitCompareChartInstance) habitCompareChartInstance.destroy();
+
+      const labels = habits.map(h => h.name);
+      const dataValues = habits.map(h => h.streak);
+
+      habitCompareChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.length ? labels : ['無資料'],
+          datasets: [{
+            label: '連續打卡天數',
+            data: dataValues.length ? dataValues : [0],
+            backgroundColor: 'rgba(30, 64, 175, 0.75)',
+            borderColor: '#1e40af',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#64748b' }, grid: { display: false } },
+            y: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: 'rgba(203, 213, 225, 0.5)' } }
+          }
+        }
+      });
     }
 
     // --- To-Do List ---
@@ -766,7 +844,7 @@
       `).join('');
     }
 
-    // --- 時間圖表 ---
+    // --- 時間與數據圖表 ---
     function renderWheelChart() {
       const ctx = document.getElementById('wheelChart');
       if (!ctx) return;
@@ -787,15 +865,15 @@
           labels: labels.length ? labels : ['尚未規劃'],
           datasets: [{
             data: dataValues.length ? dataValues : [1],
-            backgroundColor: ['#cea273', '#015185', '#5990c0', '#e76f51', '#fcedd3'],
+            backgroundColor: ['#1e40af', '#0284c7', '#d97706', '#ef4444', '#10b981'],
             borderWidth: 2,
-            borderColor: '#102a6b'
+            borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom', labels: { color: '#fcedd3' } } }
+          plugins: { legend: { position: 'bottom', labels: { color: '#0f172a' } } }
         }
       });
     }
@@ -812,8 +890,8 @@
           datasets: [{
             label: '每日專注小時',
             data: [4, 5.5, 6, 7, 5, 8, 6.5],
-            borderColor: '#cea273',
-            backgroundColor: 'rgba(206, 162, 115, 0.2)',
+            borderColor: '#1e40af',
+            backgroundColor: 'rgba(30, 64, 175, 0.1)',
             fill: true,
             tension: 0.4
           }]
@@ -821,10 +899,10 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#fcedd3' } } },
+          plugins: { legend: { labels: { color: '#0f172a' } } },
           scales: {
-            x: { ticks: { color: '#a3b8d4' }, grid: { color: 'rgba(89, 144, 192, 0.1)' } },
-            y: { ticks: { color: '#a3b8d4' }, grid: { color: 'rgba(89, 144, 192, 0.1)' } }
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(203, 213, 225, 0.5)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(203, 213, 225, 0.5)' } }
           }
         }
       });
