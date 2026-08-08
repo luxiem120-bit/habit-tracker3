@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura - 莫蘭迪灰藍學習與習慣空間</title>
+  <title>Aura - 莫蘭迪極致學習與習慣空間</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* 莫蘭迪高級灰藍配色 Morandi Slate Blue */
-      --bg: #f1f5f9;                 /* 柔和霧面灰藍底 */
-      --panel: #ffffff;              /* 純白霧面卡片 */
-      --panel-sub: #f8fafc;          /* 次要襯底 */
-      --card-border: #e2e8f0;        /* 莫蘭迪淺灰邊框 */
-      --primary: #334155;            /* 莫蘭迪深灰藍主色 */
+      --bg: #f8fafc;
+      --panel: rgba(255, 255, 255, 0.85);
+      --panel-sub: #f1f5f9;
+      --card-border: rgba(203, 213, 225, 0.6);
+      --primary: #334155;
       --primary-hover: #1e293b;
-      --accent: #475569;             /* 中性灰藍 */
-      --gold: #d97706;               /* 莫蘭迪金（強調色） */
-      --green: #0d9488;              /* 莫蘭迪綠 */
-      --text: #0f172a;               /* 深灰藍文字 */
-      --text-muted: #64748b;         /* 灰藍次要文字 */
+      --accent: #0d9488;
+      --gold: #d97706;
+      --purple: #6366f1;
+      --text: #0f172a;
+      --text-muted: #64748b;
       --danger: #f43f5e;
     }
 
@@ -28,8 +27,8 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(at 10% 10%, rgba(51, 65, 85, 0.05) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(217, 119, 6, 0.04) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.05) 0px, transparent 50%);
       background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
@@ -37,14 +36,13 @@
     }
 
     .container {
-      max-width: 980px;
+      max-width: 1000px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    /* 頂欄 */
     header {
       display: flex;
       justify-content: space-between;
@@ -54,10 +52,10 @@
     }
 
     header h1 {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--primary);
-      letter-spacing: 0.5px;
+      letter-spacing: -0.5px;
     }
 
     .user-section {
@@ -66,13 +64,12 @@
       gap: 8px;
     }
 
-    /* 分頁選單 (Tabs) */
     .tab-nav {
       display: flex;
       gap: 8px;
       background: #e2e8f0;
       padding: 6px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid var(--card-border);
       overflow-x: auto;
     }
@@ -85,20 +82,20 @@
       color: var(--text-muted);
       font-weight: 600;
       font-size: 0.88rem;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25 ease;
       white-space: nowrap;
     }
 
     .tab-btn:hover { color: var(--primary); }
     .tab-btn.active {
-      background: var(--primary);
-      color: #ffffff;
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       font-weight: 700;
     }
 
-    /* 分頁內容區塊 */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -110,15 +107,16 @@
 
     .card {
       background: var(--panel);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03);
     }
 
     .card-title {
       font-size: 1.05rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 16px;
       color: var(--primary);
       display: flex;
@@ -128,7 +126,7 @@
 
     input, select, button {
       font-size: 14px;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
       transition: all 0.2s;
     }
@@ -140,7 +138,7 @@
       padding: 9px 12px;
     }
 
-    input:focus, select:focus { border-color: var(--primary); }
+    input:focus, select:focus { border-color: var(--purple); background: #ffffff; }
 
     button {
       background: var(--primary);
@@ -151,26 +149,16 @@
       font-weight: 600;
     }
 
-    button:hover { background: var(--primary-hover); }
+    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-    /* 清單項目 */
     .list-item {
       background: var(--panel-sub);
       padding: 12px 14px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      border-radius: 12px;
+      margin-bottom: 10px;
       border: 1px solid var(--card-border);
     }
 
-    .list-item.done span {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-
-    /* 單字本卡片列表 */
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -181,46 +169,63 @@
     .deck-card {
       background: var(--panel-sub);
       border: 1px solid var(--card-border);
-      padding: 16px;
-      border-radius: 12px;
+      padding: 18px;
+      border-radius: 14px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .deck-card:hover {
-      border-color: var(--primary);
+      border-color: var(--purple);
       transform: translateY(-2px);
+      background: #ffffff;
     }
 
     .pos-badge {
-      background: var(--accent);
+      background: var(--purple);
       color: #ffffff;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       padding: 2px 6px;
-      border-radius: 4px;
+      border-radius: 6px;
       margin-right: 6px;
       font-weight: 600;
     }
 
-    .quiz-box {
-      background: var(--panel-sub);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      margin-top: 15px;
-      border: 1px solid var(--card-border);
+    /* 艾賓浩斯 7 階段勾選樣式 */
+    .ebbinghaus-steps {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
     }
 
-    /* 統計小方塊 */
+    .eb-step {
+      font-size: 0.72rem;
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+    }
+
+    .eb-step.checked {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
     .stat-box {
       background: var(--panel-sub);
       border: 1px solid var(--card-border);
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       text-align: center;
     }
 
-    /* 計算機 */
     .calc-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -237,27 +242,21 @@
       font-size: 1.8rem;
       text-align: right;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
-    .btn-calc {
-      background: #e2e8f0;
-      color: var(--text);
-      padding: 14px;
-      font-size: 1.1rem;
-    }
-
+    .btn-calc { background: #e2e8f0; color: var(--text); padding: 14px; font-size: 1.1rem; }
     .btn-calc-op { background: var(--primary); color: #ffffff; }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
-    .chart-container { position: relative; height: 220px; width: 100%; }
-    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+    .chart-container { position: relative; height: 210px; width: 100%; }
+    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--purple); }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <h1>🌫️ Aura Workspace</h1>
+      <h1>✨ Aura Workspace</h1>
       <div class="user-section">
         <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">未登入</span>
         <input type="text" id="usernameInput" placeholder="使用者" style="width: 90px;">
@@ -265,24 +264,21 @@
       </div>
     </header>
 
-    <!-- 分頁導覽按鈕 -->
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 詞性單字本</button>
-      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
+      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 階段單字本</button>
+      <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 雙作息圓盤</button>
+      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
-      <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 作息輪盤</button>
       <button class="tab-btn" onclick="switchTab('statsTab')">📊 專注分析</button>
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 詞性單字本 -->
+    <!-- 分頁 1: 單字本與艾賓浩斯 7 階段 -->
     <div id="vocabTab" class="tab-content active">
       <div id="deckListView" class="card">
-        <div class="card-title">
-          <span>📚 我的單字本庫</span>
-        </div>
+        <div class="card-title">📚 我的單字本庫</div>
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 西班牙語單字)" style="flex:1;">
+          <input type="text" id="newDeckName" placeholder="單字本名稱 (如: 多益、西班牙文)" style="flex:1;">
           <button onclick="createDeck()">建立單字本</button>
         </div>
         <div class="deck-grid" id="deckGrid"></div>
@@ -294,7 +290,7 @@
           <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
         </div>
 
-        <div style="font-size: 0.85rem; color: var(--gold); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
+        <div style="font-size: 0.85rem; color: var(--purple); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
 
         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -310,86 +306,70 @@
               <option value="other">其他</option>
             </select>
             <input type="text" id="vocabMeaning" placeholder="中文解釋" style="flex:2; min-width: 120px;">
-          </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <label style="font-size: 0.8rem; color: var(--text-muted);">初學時間：</label>
-            <input type="datetime-local" id="vocabDate" style="flex:1;">
             <button onclick="addVocab()">新增單字</button>
           </div>
         </div>
 
-        <div class="quiz-box">
-          <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
-            <button style="font-size: 0.8rem;" onclick="startQuiz('en-zh')">英翻中</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('zh-en')">中翻英</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('audio')">🔊 聽力</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('spelling')">⌨️ 拼字</button>
-          </div>
-          <div id="quizArea" style="display: none;">
-            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;" id="quizQuestion">---</div>
-            <div id="quizInputArea" style="margin-bottom: 10px;"></div>
-            <button onclick="checkAnswer()">提交答案</button>
-            <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
-          </div>
-        </div>
-
-        <div style="margin-top: 15px; max-height: 280px; overflow-y: auto;" id="vocabList"></div>
+        <div style="margin-top: 15px; max-height: 380px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
 
-    <!-- 分頁 2: 習慣追蹤與獨立數據統計專區 -->
+    <!-- 分頁 2: 雙作息圓盤（預計 vs 實際） -->
+    <div id="timeTab" class="tab-content">
+      <div class="grid-2">
+        <!-- 預計輪盤 -->
+        <div class="card">
+          <div class="card-title">🎯 預計作息圓盤</div>
+          <div class="chart-container"><canvas id="targetWheelChart"></canvas></div>
+          <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;">
+            <input type="text" id="targetName" placeholder="預計事項" style="flex:2;">
+            <input type="time" id="targetStart" style="flex:1;">
+            <input type="time" id="targetEnd" style="flex:1;">
+            <button onclick="addTargetTime()">加</button>
+          </div>
+          <div id="targetList" style="max-height: 120px; overflow-y: auto; margin-top: 8px;"></div>
+        </div>
+
+        <!-- 實際輪盤 -->
+        <div class="card">
+          <div class="card-title">✅ 實際執行圓盤</div>
+          <div class="chart-container"><canvas id="actualWheelChart"></canvas></div>
+          <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;">
+            <input type="text" id="actualName" placeholder="實際事項" style="flex:2;">
+            <input type="time" id="actualStart" style="flex:1;">
+            <input type="time" id="actualEnd" style="flex:1;">
+            <button onclick="addActualTime()">加</button>
+          </div>
+          <div id="actualList" style="max-height: 120px; overflow-y: auto; margin-top: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分頁 3: 習慣追蹤與統計 -->
     <div id="habitTab" class="tab-content">
       <div style="display: flex; flex-direction: column; gap: 20px;">
-        <!-- 上卡片：打卡與習慣清單 -->
         <div class="card">
-          <div class="card-title">🔥 每日習慣追蹤 (Habit Tracker)</div>
+          <div class="card-title">🔥 每日習慣追蹤</div>
           <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <input type="text" id="habitInput" placeholder="新增習慣 (例如: 每日閱讀 20 分鐘)..." style="flex: 1;">
+            <input type="text" id="habitInput" placeholder="新增習慣..." style="flex: 1;">
             <button onclick="addHabit()">新增習慣</button>
           </div>
-          <div id="habitList" style="max-height: 250px; overflow-y: auto;"></div>
+          <div id="habitList" style="max-height: 220px; overflow-y: auto;"></div>
         </div>
 
-        <!-- 下卡片：習慣統計與天數比較區域 -->
         <div class="card">
-          <div class="card-title">📊 習慣追蹤數據統計與比較</div>
-          
-          <!-- 3 個關鍵數據指標框 -->
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-            <div class="stat-box">
-              <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary);" id="statTotalHabits">0</div>
-              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">追蹤習慣總數</div>
-            </div>
-            <div class="stat-box">
-              <div style="font-size: 1.3rem; font-weight: bold; color: var(--green);" id="statTodayRate">0%</div>
-              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">今日完成率</div>
-            </div>
-            <div class="stat-box">
-              <div style="font-size: 1.3rem; font-weight: bold; color: var(--gold);" id="statMaxStreak">0 天</div>
-              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">最高連續打卡</div>
-            </div>
+          <div class="card-title">📊 習慣數據統計</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+            <div class="stat-box"><div style="font-size: 1.2rem; font-weight: bold;" id="statTotalHabits">0</div><div style="font-size: 0.75rem; color: var(--text-muted);">總習慣數</div></div>
+            <div class="stat-box"><div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);" id="statTodayRate">0%</div><div style="font-size: 0.75rem; color: var(--text-muted);">今日打卡率</div></div>
+            <div class="stat-box"><div style="font-size: 1.2rem; font-weight: bold; color: var(--gold);" id="statMaxStreak">0 天</div><div style="font-size: 0.75rem; color: var(--text-muted);">最高連續</div></div>
           </div>
-
-          <!-- 雙圖表比較區塊 -->
-          <div class="grid-2">
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center;">各習慣連續打卡天數比較</div>
-              <div class="chart-container" style="height: 200px;">
-                <canvas id="habitBarChart"></canvas>
-              </div>
-            </div>
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center;">今日打卡完成比例</div>
-              <div class="chart-container" style="height: 200px;">
-                <canvas id="habitPieChart"></canvas>
-              </div>
-            </div>
-          </div>
+          <div class="chart-container" style="height: 180px;"><canvas id="habitBarChart"></canvas></div>
         </div>
       </div>
     </div>
 
-    <!-- 分頁 3: To-Do List -->
+    <!-- 分頁 4: To-Do List -->
     <div id="todoTab" class="tab-content">
       <div class="card">
         <div class="card-title">✅ 每日待辦事項 (To-Do List)</div>
@@ -401,36 +381,11 @@
       </div>
     </div>
 
-    <!-- 分頁 4: 時間作息輪盤 -->
-    <div id="timeTab" class="tab-content">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title">⏰ 24H 時間作息圓盤</div>
-          <div class="chart-container">
-            <canvas id="wheelChart"></canvas>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📝 作息規劃紀錄</div>
-          <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-            <input type="text" id="timeItemName" placeholder="事項 (如: 閱讀)" style="flex: 2;">
-            <input type="time" id="startTime" style="flex: 1;">
-            <input type="time" id="endTime" style="flex: 1;">
-            <button onclick="addTimeLog()">加</button>
-          </div>
-          <div id="timeLogList" style="max-height: 220px; overflow-y: auto;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 分頁 5: 數據分析 -->
+    <!-- 分頁 5: 專注數據分析 -->
     <div id="statsTab" class="tab-content">
       <div class="card">
-        <div class="card-title">📊 專注趨勢分析</div>
-        <div class="chart-container">
-          <canvas id="statsChart"></canvas>
-        </div>
+        <div class="card-title">📊 每日實際專注時數趨勢</div>
+        <div class="chart-container"><canvas id="statsChart"></canvas></div>
       </div>
     </div>
 
@@ -469,15 +424,15 @@
   </div>
 
   <script>
-    const nowISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-    document.getElementById('vocabDate').value = nowISO;
-
     let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
     let currentDeckId = null;
-    let wheelChartInstance = null;
-    let statsChartInstance = null;
+
+    let targetWheelChartInstance = null;
+    let actualWheelChartInstance = null;
     let habitBarChartInstance = null;
-    let habitPieChartInstance = null;
+    let statsChartInstance = null;
+
+    const todayStr = new Date().toISOString().split('T')[0];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -485,8 +440,8 @@
       document.getElementById(tabId).classList.add('active');
       event.target.classList.add('active');
 
+      if (tabId === 'timeTab') renderDoubleWheels();
       if (tabId === 'habitTab') renderHabitCharts();
-      if (tabId === 'timeTab') renderWheelChart();
       if (tabId === 'statsTab') renderStatsChart();
     }
 
@@ -507,31 +462,22 @@
     let decks = [];
     let habits = [];
     let todos = [];
-    let timeLogs = [];
+    let targetLogs = [];
+    let actualLogs = [];
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
 
     function loadUserData() {
-      decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [
-        { id: 1, name: "預設單字本", vocabs: [] }
-      ];
-      habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [
-        { id: 1, name: "每日背單字 15 分鐘", streak: 4, lastChecked: todayStr },
-        { id: 2, name: "喝水 2000cc", streak: 6, lastChecked: "" },
-        { id: 3, name: "閱讀 20 分鐘", streak: 2, lastChecked: todayStr }
-      ];
-      todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [
-        { id: 1, text: "完成今天的學習打卡", done: false }
-      ];
-      timeLogs = JSON.parse(localStorage.getItem(`timeLogs_${currentUser}`)) || [
-        { id: 1, name: '睡眠', start: '00:00', end: '07:00' }
-      ];
+      decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [{ id: 1, name: "預設單字本", vocabs: [] }];
+      habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
+      todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
+      targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
+      actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
 
       renderDecks();
       renderHabits();
       renderTodos();
-      renderTimeLogs();
-      renderWheelChart();
+      renderDoubleWheels();
       renderHabitCharts();
     }
 
@@ -539,27 +485,23 @@
       localStorage.setItem(`decks_${currentUser}`, JSON.stringify(decks));
       localStorage.setItem(`habits_${currentUser}`, JSON.stringify(habits));
       localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
-      localStorage.setItem(`timeLogs_${currentUser}`, JSON.stringify(timeLogs));
+      localStorage.setItem(`targetLogs_${currentUser}`, JSON.stringify(targetLogs));
+      localStorage.setItem(`actualLogs_${currentUser}`, JSON.stringify(actualLogs));
+
       renderDecks();
       renderHabits();
       renderTodos();
-      renderTimeLogs();
+      renderDoubleWheels();
       renderHabitCharts();
       if (currentDeckId) renderDeckDetail();
     }
 
-    // --- 多單字本邏輯 ---
+    // --- 單字本與艾賓浩斯 7 階段獨立勾選 ---
     function createDeck() {
       const name = document.getElementById('newDeckName').value.trim();
       if (!name) return;
       decks.push({ id: Date.now(), name, vocabs: [] });
       document.getElementById('newDeckName').value = '';
-      saveUserData();
-    }
-
-    function deleteDeck(id, event) {
-      event.stopPropagation();
-      decks = decks.filter(d => d.id !== id);
       saveUserData();
     }
 
@@ -579,64 +521,65 @@
 
     function renderDecks() {
       const grid = document.getElementById('deckGrid');
-      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">無單字本，請新增</p>' : '';
+      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">尚無單字本</p>' : '';
       grid.innerHTML = decks.map(d => `
         <div class="deck-card" onclick="openDeck(${d.id})">
           <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
-          <div style="font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
-            <span>${d.vocabs.length} 個單字</span>
-            <button class="btn-delete" onclick="deleteDeck(${d.id}, event)">刪除</button>
-          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted);">${d.vocabs.length} 個單字</div>
         </div>
       `).join('');
     }
 
-    // --- 單字本與詞性邏輯 ---
     function renderDeckDetail() {
       const deck = decks.find(d => d.id === currentDeckId);
       if (!deck) return;
 
       document.getElementById('currentDeckTitle').innerText = `📖 ${deck.name}`;
       
-      const doneCount = deck.vocabs.filter(v => v.done).length;
-      const rate = deck.vocabs.length === 0 ? 0 : Math.round((doneCount / deck.vocabs.length) * 100);
-      document.getElementById('deckProgress').innerText = `學習進度：${rate}% (已背熟 ${doneCount}/${deck.vocabs.length})`;
-
       const list = document.getElementById('vocabList');
-      list.innerHTML = deck.vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">此單字本尚無內容</p>' : '';
-      list.innerHTML = deck.vocabs.map(v => `
-        <div class="list-item ${v.done ? 'done' : ''}">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input type="checkbox" class="checkbox-custom" ${v.done ? 'checked' : ''} onchange="toggleVocabDone(${v.id})">
-            <div>
-              <span class="pos-badge">${v.pos || 'n.'}</span>
-              <strong style="color:var(--primary);">${v.word}</strong> - <span>${v.meaning}</span>
-              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${calculateNextReview(v.date)}</div>
+      list.innerHTML = deck.vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前無內容</p>' : '';
+      
+      list.innerHTML = deck.vocabs.map(v => {
+        const stepsHtml = ebStages.map((stage, idx) => {
+          const isChecked = v.steps && v.steps[idx];
+          return `<span class="eb-step ${isChecked ? 'checked' : ''}" onclick="toggleEbStep(${v.id}, ${idx})">${isChecked ? '✓' : '○'} ${stage}</span>`;
+        }).join('');
+
+        return `
+          <div class="list-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span class="pos-badge">${v.pos}</span>
+                <strong style="color:var(--primary); font-size:1.05rem;">${v.word}</strong> - <span>${v.meaning}</span>
+              </div>
+              <button class="btn-delete" onclick="deleteVocab(${v.id})">✕</button>
             </div>
+            <div class="ebbinghaus-steps">${stepsHtml}</div>
           </div>
-          <button class="btn-delete" onclick="deleteVocab(${v.id})">✕</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function addVocab() {
       const word = document.getElementById('vocabWord').value.trim();
       const pos = document.getElementById('vocabPOS').value;
       const meaning = document.getElementById('vocabMeaning').value.trim();
-      const date = document.getElementById('vocabDate').value;
       if (!word || !meaning || !currentDeckId) return;
 
       const deck = decks.find(d => d.id === currentDeckId);
-      deck.vocabs.push({ id: Date.now(), word, pos, meaning, date, done: false });
+      deck.vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
       document.getElementById('vocabWord').value = '';
       document.getElementById('vocabMeaning').value = '';
       saveUserData();
     }
 
-    function toggleVocabDone(vocabId) {
+    function toggleEbStep(vocabId, stepIndex) {
       const deck = decks.find(d => d.id === currentDeckId);
       const v = deck.vocabs.find(item => item.id === vocabId);
-      if (v) v.done = !v.done;
+      if (v) {
+        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
+        v.steps[stepIndex] = !v.steps[stepIndex];
+      }
       saveUserData();
     }
 
@@ -646,267 +589,113 @@
       saveUserData();
     }
 
-    // --- 艾賓浩斯算法 ---
-    const ebbinghausStages = [
-      { name: "1. 第一遍", hours: 0 },
-      { name: "2. 1hr 後複習", hours: 1 },
-      { name: "3. 1天後複習", hours: 24 },
-      { name: "4. 2天後複習", hours: 48 },
-      { name: "5. 6天後複習", hours: 144 },
-      { name: "6. 14天後複習", hours: 336 },
-      { name: "7. 30天後複習", hours: 720 }
-    ];
-
-    function calculateNextReview(learnDateStr) {
-      const learnTime = new Date(learnDateStr).getTime();
-      const now = new Date().getTime();
-      const diffHours = (now - learnTime) / (1000 * 60 * 60);
-
-      if (isNaN(diffHours) || diffHours < 0) return "時間無效";
-      let nextStage = ebbinghausStages.find(s => s.hours > diffHours);
-      if (!nextStage) return "🎉 已進入長期記憶";
-
-      const remainingHours = nextStage.hours - diffHours;
-      if (remainingHours <= 1) return `⚠️ 該進行「${nextStage.name}」`;
-      if (remainingHours < 24) return `🧠 下次: ${nextStage.name} (${Math.round(remainingHours)}小時後)`;
-      return `🧠 下次: ${nextStage.name} (${Math.round(remainingHours / 24)}天後)`;
+    // --- 雙作息圓盤（預計 vs 實際） ---
+    function addTargetTime() {
+      const name = document.getElementById('targetName').value.trim();
+      const start = document.getElementById('targetStart').value;
+      const end = document.getElementById('targetEnd').value;
+      if (!name || !start || !end) return;
+      targetLogs.push({ id: Date.now(), name, start, end });
+      saveUserData();
     }
 
-    // --- 測驗 ---
-    let currentQuizMode = '';
-    let currentQuizItem = null;
-
-    function startQuiz(mode) {
-      const deck = decks.find(d => d.id === currentDeckId);
-      if (!deck || deck.vocabs.length === 0) { alert("此單字本尚無單字可供測驗！"); return; }
-      currentQuizMode = mode;
-      document.getElementById('quizArea').style.display = 'block';
-      nextQuestion();
+    function addActualTime() {
+      const name = document.getElementById('actualName').value.trim();
+      const start = document.getElementById('actualStart').value;
+      const end = document.getElementById('actualEnd').value;
+      if (!name || !start || !end) return;
+      actualLogs.push({ id: Date.now(), name, start, end });
+      saveUserData();
     }
 
-    function nextQuestion() {
-      const deck = decks.find(d => d.id === currentDeckId);
-      document.getElementById('quizResult').innerText = '';
-      currentQuizItem = deck.vocabs[Math.floor(Math.random() * deck.vocabs.length)];
-      const qText = document.getElementById('quizQuestion');
-      const inputArea = document.getElementById('quizInputArea');
-
-      if (currentQuizMode === 'en-zh') {
-        qText.innerText = `英文：[${currentQuizItem.pos}] ${currentQuizItem.word}`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入中文翻譯..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'zh-en') {
-        qText.innerText = `中文：${currentQuizItem.meaning} (${currentQuizItem.pos})`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入英文單字..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'audio') {
-        qText.innerText = `🔊 聽力測試 (${currentQuizItem.pos})`;
-        speakWord(currentQuizItem.word);
-        inputArea.innerHTML = `<button onclick="speakWord('${currentQuizItem.word}')">再次播放 🔊</button><br><input type="text" id="quizAnswer" placeholder="輸入聽到的英文..." style="width: 80%; margin-top: 8px;">`;
-      } else if (currentQuizMode === 'spelling') {
-        qText.innerText = `拼字：${currentQuizItem.meaning} [${currentQuizItem.pos}]`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="正確拼出英文..." style="width: 80%;">`;
-      }
+    function renderDoubleWheels() {
+      renderWheel('targetWheelChart', targetLogs, targetWheelChartInstance, (inst) => targetWheelChartInstance = inst, ['#6366f1', '#0d9488', '#d97706', '#94a3b8']);
+      renderWheel('actualWheelChart', actualLogs, actualWheelChartInstance, (inst) => actualWheelChartInstance = inst, ['#0d9488', '#6366f1', '#f43f5e', '#d97706']);
+      
+      document.getElementById('targetList').innerHTML = targetLogs.map(t => `<div style="font-size:0.8rem; color:var(--text-muted);">🎯 ${t.name} (${t.start}-${t.end})</div>`).join('');
+      document.getElementById('actualList').innerHTML = actualLogs.map(a => `<div style="font-size:0.8rem; color:var(--text-muted);">✅ ${a.name} (${a.start}-${a.end})</div>`).join('');
     }
 
-    function speakWord(text) {
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      synth.speak(utter);
+    function renderWheel(elementId, logs, instanceVar, setInstance, colors) {
+      const ctx = document.getElementById(elementId);
+      if (!ctx) return;
+      if (instanceVar) instanceVar.destroy();
+
+      const labels = logs.map(i => i.name);
+      const dataValues = logs.map(i => {
+        const s = i.start.split(':'), e = i.end.split(':');
+        let mins = (parseInt(e[0])*60 + parseInt(e[1])) - (parseInt(s[0])*60 + parseInt(s[1]));
+        return mins > 0 ? mins : mins + 1440;
+      });
+
+      const newInst = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels.length ? labels : ['無資料'],
+          datasets: [{ data: dataValues.length ? dataValues : [1], backgroundColor: colors, borderWidth: 2, borderColor: '#ffffff' }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 10 } } } } }
+      });
+      setInstance(newInst);
     }
 
-    function checkAnswer() {
-      const userAns = document.getElementById('quizAnswer').value.trim().toLowerCase();
-      const res = document.getElementById('quizResult');
-
-      let isCorrect = (currentQuizMode === 'en-zh') ? currentQuizItem.meaning.includes(userAns) : (userAns === currentQuizItem.word.toLowerCase());
-
-      if (isCorrect) {
-        res.innerHTML = `<span style="color:var(--primary);">🎉 正確！[${currentQuizItem.pos}] ${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
-        setTimeout(nextQuestion, 1500);
-      } else {
-        res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！正確答案：[${currentQuizItem.pos}] ${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
-      }
-    }
-
-    // --- 習慣追蹤 (Habit Tracker) 與統計比較邏輯 ---
+    // --- 習慣與專注數據 ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
       habits.push({ id: Date.now(), name, streak: 0, lastChecked: "" });
-      document.getElementById('habitInput').value = '';
       saveUserData();
     }
 
     function checkInHabit(id) {
-      const h = habits.find(item => item.id === id);
-      if (!h) return;
-      if (h.lastChecked === todayStr) {
-        alert("今日已完成打卡囉！");
-        return;
-      }
-      h.streak += 1;
-      h.lastChecked = todayStr;
-      saveUserData();
-    }
-
-    function deleteHabit(id) {
-      habits = habits.filter(item => item.id !== id);
-      saveUserData();
+      const h = habits.find(i => i.id === id);
+      if (h && h.lastChecked !== todayStr) { h.streak += 1; h.lastChecked = todayStr; saveUserData(); }
     }
 
     function renderHabits() {
       const container = document.getElementById('habitList');
-      container.innerHTML = habits.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前沒有追蹤習慣！</p>' : '';
-      container.innerHTML = habits.map(h => {
-        const isCheckedToday = h.lastChecked === todayStr;
-        return `
-          <div class="list-item">
-            <div>
-              <strong style="color:var(--primary);">${h.name}</strong>
-              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
-                🔥 連續打卡：<span style="color:var(--gold); font-weight:bold;">${h.streak}</span> 天
-              </div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <button style="font-size:0.8rem; ${isCheckedToday ? 'background:var(--card-border); color:var(--text-muted); cursor:default;' : ''}" onclick="checkInHabit(${h.id})">
-                ${isCheckedToday ? '✅ 今日已打卡' : '📌 每日打卡'}
-              </button>
-              <button class="btn-delete" onclick="deleteHabit(${h.id})">✕</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // 渲染習慣雙統計圖表（橫向長條比較 + 圓餅佔比）
-    function renderHabitCharts() {
-      document.getElementById('statTotalHabits').innerText = habits.length;
-      const checkedTodayCount = habits.filter(h => h.lastChecked === todayStr).length;
-      const rate = habits.length === 0 ? 0 : Math.round((checkedTodayCount / habits.length) * 100);
-      document.getElementById('statTodayRate').innerText = `${rate}%`;
-
-      const maxStreak = habits.length === 0 ? 0 : Math.max(...habits.map(h => h.streak));
-      document.getElementById('statMaxStreak').innerText = `${maxStreak} 天`;
-
-      // 圖表 1: 習慣天數長條比較圖
-      const ctxBar = document.getElementById('habitBarChart');
-      if (ctxBar) {
-        if (habitBarChartInstance) habitBarChartInstance.destroy();
-        habitBarChartInstance = new Chart(ctxBar, {
-          type: 'bar',
-          data: {
-            labels: habits.length ? habits.map(h => h.name) : ['無習慣'],
-            datasets: [{
-              label: '連續天數',
-              data: habits.length ? habits.map(h => h.streak) : [0],
-              backgroundColor: '#334155',
-              borderRadius: 6
-            }]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#e2e8f0' } },
-              y: { ticks: { color: '#64748b' }, grid: { display: false } }
-            }
-          }
-        });
-      }
-
-      // 圖表 2: 今日打卡圓餅占比圖
-      const ctxPie = document.getElementById('habitPieChart');
-      if (ctxPie) {
-        if (habitPieChartInstance) habitPieChartInstance.destroy();
-        const uncheckCount = habits.length - checkedTodayCount;
-        habitPieChartInstance = new Chart(ctxPie, {
-          type: 'doughnut',
-          data: {
-            labels: ['已完成打卡', '未完成打卡'],
-            datasets: [{
-              data: habits.length ? [checkedTodayCount, uncheckCount] : [0, 1],
-              backgroundColor: ['#0d9488', '#cbd5e1'],
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { color: '#64748b' } } }
-          }
-        });
-      }
-    }
-
-    // --- To-Do List ---
-    function addTodo() {
-      const text = document.getElementById('todoInput').value.trim();
-      if (!text) return;
-      todos.push({ id: Date.now(), text, done: false });
-      document.getElementById('todoInput').value = '';
-      saveUserData();
-    }
-
-    function toggleTodo(id) {
-      const t = todos.find(item => item.id === id);
-      if (t) t.done = !t.done;
-      saveUserData();
-    }
-
-    function deleteTodo(id) {
-      todos = todos.filter(item => item.id !== id);
-      saveUserData();
-    }
-
-    function renderTodos() {
-      const container = document.getElementById('todoList');
-      container.innerHTML = todos.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前沒有待辦事項！</p>' : '';
-      container.innerHTML = todos.map(t => `
-        <div class="list-item ${t.done ? 'done' : ''}">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input type="checkbox" class="checkbox-custom" ${t.done ? 'checked' : ''} onchange="toggleTodo(${t.id})">
-            <span>${t.text}</span>
-          </div>
-          <button class="btn-delete" onclick="deleteTodo(${t.id})">✕</button>
+      container.innerHTML = habits.map(h => `
+        <div class="list-item" style="display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>${h.name}</strong> <span style="font-size:0.8rem; color:var(--gold);">🔥 ${h.streak}天</span></div>
+          <button style="font-size:0.78rem;" onclick="checkInHabit(${h.id})">${h.lastChecked === todayStr ? '✅ 已打卡' : '📌 打卡'}</button>
         </div>
       `).join('');
     }
 
-    // --- 時間與數據圖表 ---
-    function renderWheelChart() {
-      const ctx = document.getElementById('wheelChart');
+    function renderHabitCharts() {
+      document.getElementById('statTotalHabits').innerText = habits.length;
+      const checkedToday = habits.filter(h => h.lastChecked === todayStr).length;
+      document.getElementById('statTodayRate').innerText = habits.length ? `${Math.round((checkedToday/habits.length)*100)}%` : '0%';
+      document.getElementById('statMaxStreak').innerText = habits.length ? `${Math.max(...habits.map(h => h.streak))} 天` : '0 天';
+
+      const ctx = document.getElementById('habitBarChart');
       if (!ctx) return;
-      if (wheelChartInstance) wheelChartInstance.destroy();
-
-      const labels = timeLogs.map(item => item.name);
-      const dataValues = timeLogs.map(item => {
-        if (!item.start || !item.end) return 1;
-        const s = item.start.split(':');
-        const e = item.end.split(':');
-        let mins = (parseInt(e[0]) * 60 + parseInt(e[1])) - (parseInt(s[0]) * 60 + parseInt(s[1]));
-        return mins > 0 ? mins : mins + 1440;
-      });
-
-      wheelChartInstance = new Chart(ctx, {
-        type: 'doughnut',
+      if (habitBarChartInstance) habitBarChartInstance.destroy();
+      habitBarChartInstance = new Chart(ctx, {
+        type: 'bar',
         data: {
-          labels: labels.length ? labels : ['尚未規劃'],
-          datasets: [{
-            data: dataValues.length ? dataValues : [1],
-            backgroundColor: ['#334155', '#475569', '#0d9488', '#d97706', '#94a3b8'],
-            borderWidth: 2,
-            borderColor: '#ffffff'
-          }]
+          labels: habits.map(h => h.name),
+          datasets: [{ label: '打卡天數', data: habits.map(h => h.streak), backgroundColor: '#334155', borderRadius: 6 }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom', labels: { color: '#0f172a' } } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
+    }
+
+    // --- To-Do ---
+    function addTodo() {
+      const text = document.getElementById('todoInput').value.trim();
+      if (!text) return;
+      todos.push({ id: Date.now(), text, done: false });
+      saveUserData();
+    }
+
+    function renderTodos() {
+      document.getElementById('todoList').innerHTML = todos.map(t => `
+        <div class="list-item" style="display:flex; justify-content:space-between;">
+          <span>${t.text}</span>
+          <button class="btn-delete" onclick="todos=todos.filter(i=>i.id!=${t.id});saveUserData();">✕</button>
+        </div>
+      `).join('');
     }
 
     function renderStatsChart() {
@@ -918,54 +707,10 @@
         type: 'line',
         data: {
           labels: ['週一', '週二', '週三', '週四', '週五', '週六', '週日'],
-          datasets: [{
-            label: '每日專注小時',
-            data: [4, 5.5, 6, 7, 5, 8, 6.5],
-            borderColor: '#334155',
-            backgroundColor: 'rgba(51, 65, 85, 0.1)',
-            fill: true,
-            tension: 0.4
-          }]
+          datasets: [{ label: '實際專注小時', data: [3.5, 5, 6, 6.5, 4, 7.5, 6], borderColor: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', fill: true, tension: 0.4 }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#0f172a' } } },
-          scales: {
-            x: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } },
-            y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
       });
-    }
-
-    function addTimeLog() {
-      const name = document.getElementById('timeItemName').value.trim();
-      const start = document.getElementById('startTime').value;
-      const end = document.getElementById('endTime').value;
-
-      if (!name || !start || !end) return;
-      timeLogs.push({ id: Date.now(), name, start, end });
-      document.getElementById('timeItemName').value = '';
-      saveUserData();
-    }
-
-    function deleteTimeLog(id) {
-      timeLogs = timeLogs.filter(item => item.id !== id);
-      saveUserData();
-    }
-
-    function renderTimeLogs() {
-      const container = document.getElementById('timeLogList');
-      container.innerHTML = timeLogs.map(item => `
-        <div class="list-item">
-          <div>
-            <strong>${item.name}</strong> 
-            <span style="font-size:0.8rem; color:var(--text-muted);">(${item.start} - ${item.end})</span>
-          </div>
-          <button class="btn-delete" onclick="deleteTimeLog(${item.id})">✕</button>
-        </div>
-      `).join('');
     }
 
     // --- 計算機 ---
@@ -973,13 +718,8 @@
     function calcInput(val) {
       const screen = document.getElementById('calcScreen');
       if (val === 'C') { calcExpr = ''; screen.innerText = '0'; }
-      else if (val === '=') {
-        try { screen.innerText = eval(calcExpr) || '0'; calcExpr = screen.innerText; }
-        catch { screen.innerText = 'Error'; calcExpr = ''; }
-      } else {
-        calcExpr += val;
-        screen.innerText = calcExpr;
-      }
+      else if (val === '=') { try { screen.innerText = eval(calcExpr) || '0'; calcExpr = screen.innerText; } catch { screen.innerText = 'Error'; calcExpr = ''; } }
+      else { calcExpr += val; screen.innerText = calcExpr; }
     }
 
     updateUserUI();
