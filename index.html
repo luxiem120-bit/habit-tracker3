@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura Workspace - 完整版</title>
+  <title>Aura Workspace - 帳號與單字本完整版</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -223,6 +223,24 @@
     .btn-calc-op { background: var(--primary); color: #ffffff; }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 210px; width: 100%; }
+
+    /* 帳號 Modal 彈窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -231,9 +249,9 @@
     <header>
       <h1>✨ Aura Workspace</h1>
       <div class="user-section">
-        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">未登入</span>
-        <input type="text" id="usernameInput" placeholder="使用者" style="width: 90px;">
-        <button onclick="loginUser()">切換</button>
+        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">👤 使用者: Default</span>
+        <button onclick="openAuthModal('login')">登入</button>
+        <button style="background: var(--purple);" onclick="openAuthModal('register')">註冊帳號</button>
       </div>
     </header>
 
@@ -246,7 +264,7 @@
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 背單字與測驗 (直接展示) -->
+    <!-- 分頁 1: 背單字與測驗 -->
     <div id="vocabTab" class="tab-content active">
       <div class="card">
         <div class="card-title">📖 艾賓浩斯 7 階段背單字與測驗</div>
@@ -286,7 +304,7 @@
           </div>
         </div>
 
-        <!-- 單字列表與 7 階段打卡 -->
+        <!-- 單字列表 -->
         <div style="max-height: 380px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
@@ -398,8 +416,24 @@
     </div>
   </div>
 
+  <!-- 帳號彈窗 Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <h3 style="margin-bottom: 16px; color: var(--primary);" id="modalTitle">帳號登入</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" id="authUsername" placeholder="輸入使用者名稱">
+        <input type="password" id="authPassword" placeholder="輸入密碼">
+        <input type="password" id="authConfirmPassword" placeholder="再次確認密碼" style="display:none;">
+        <button onclick="handleAuthSubmit()" id="authSubmitBtn">登入</button>
+        <button style="background: transparent; color: var(--text-muted); font-size: 0.8rem;" onclick="closeAuthModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
+    let authMode = 'login'; // 'login' 或 'register'
+
     let targetWheelChartInstance = null;
     let actualWheelChartInstance = null;
     let habitBarChartInstance = null;
@@ -407,6 +441,14 @@
 
     const todayStr = new Date().toISOString().split('T')[0];
     const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
+
+    // 內建預設單字庫
+    const defaultVocabs = [
+      { id: 1, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] },
+      { id: 2, word: 'focus', pos: 'v.', meaning: '專注', steps: [true, false, false, false, false, false, false] },
+      { id: 3, word: 'habit', pos: 'n.', meaning: '習慣', steps: [true, true, true, false, false, false, false] },
+      { id: 4, word: 'achieve', pos: 'v.', meaning: '達成', steps: [false, false, false, false, false, false, false] }
+    ];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -419,13 +461,45 @@
       if (tabId === 'statsTab') renderStatsChart();
     }
 
-    function loginUser() {
-      const name = document.getElementById('usernameInput').value.trim();
-      if (!name) return;
-      currentUser = name;
+    // --- 帳號管理邏輯 ---
+    function openAuthModal(mode) {
+      authMode = mode;
+      document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入' : '✨ 創建新帳號';
+      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? '登入' : '完成註冊';
+      document.getElementById('authConfirmPassword').style.display = mode === 'register' ? 'block' : 'none';
+      document.getElementById('authModal').style.display = 'flex';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function handleAuthSubmit() {
+      const user = document.getElementById('authUsername').value.trim();
+      const pass = document.getElementById('authPassword').value.trim();
+      const confirmPass = document.getElementById('authConfirmPassword').value.trim();
+
+      if (!user || !pass) { alert("請填寫帳號與密碼！"); return; }
+
+      let usersDB = JSON.parse(localStorage.getItem('aura_users_db')) || {};
+
+      if (authMode === 'register') {
+        if (pass !== confirmPass) { alert("兩次密碼輸入不一致！"); return; }
+        if (usersDB[user]) { alert("此帳號名稱已存在！"); return; }
+        usersDB[user] = pass;
+        localStorage.setItem('aura_users_db', JSON.stringify(usersDB));
+        alert("🎉 註冊成功！已自動登入！");
+      } else {
+        if (usersDB[user] && usersDB[user] !== pass) {
+          alert("密碼錯誤！"); return;
+        }
+      }
+
+      currentUser = user;
       localStorage.setItem('aura_currentUser', currentUser);
       updateUserUI();
       loadUserData();
+      closeAuthModal();
     }
 
     function updateUserUI() {
@@ -439,9 +513,7 @@
     let actualLogs = [];
 
     function loadUserData() {
-      vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || [
-        { id: 1, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] }
-      ];
+      vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || defaultVocabs;
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
       todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
       targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
@@ -468,7 +540,7 @@
       renderHabitCharts();
     }
 
-    // --- 單字本與測驗 ---
+    // --- 單字與 7 階段打卡 ---
     function addVocab() {
       const word = document.getElementById('vocabWord').value.trim();
       const pos = document.getElementById('vocabPOS').value;
@@ -520,7 +592,7 @@
       }).join('');
     }
 
-    // 測驗邏輯
+    // 測驗功能
     let currentQuizMode = '', currentQuizItem = null;
     function startQuiz(mode) {
       if (vocabs.length === 0) { alert("請先新增單字！"); return; }
