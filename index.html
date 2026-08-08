@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura - 淺色群青空間 Workspace</title>
+  <title>Aura - 莫蘭迪灰藍學習與習慣空間</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* 淺色群青調色盤 Light Blue Palette */
-      --bg: #f1f5f9;                 /* 明亮淺灰藍底色 */
-      --panel: #ffffff;              /* 純白卡片 */
-      --panel-secondary: #e2e8f0;    /* 柔和次要卡片 */
-      --card-border: #cbd5e1;        /* 淺藍灰邊框 */
-      --primary: #1e40af;            /* 群青藍主色 */
-      --primary-hover: #1d4ed8;
-      --sandy-gold: #d97706;         /* 琥珀金標示 */
-      --accent: #0284c7;             /* 晴空藍 */
-      --text: #0f172a;               /* 深色文字 */
-      --text-muted: #64748b;         /* 灰色次要文字 */
-      --danger: #ef4444;
+      /* 莫蘭迪高級灰藍配色 Morandi Slate Blue */
+      --bg: #f1f5f9;                 /* 柔和霧面灰藍底 */
+      --panel: #ffffff;              /* 純白霧面卡片 */
+      --panel-sub: #f8fafc;          /* 次要襯底 */
+      --card-border: #e2e8f0;        /* 莫蘭迪淺灰邊框 */
+      --primary: #334155;            /* 莫蘭迪深灰藍主色 */
+      --primary-hover: #1e293b;
+      --accent: #475569;             /* 中性灰藍 */
+      --gold: #d97706;               /* 莫蘭迪金（強調色） */
+      --green: #0d9488;              /* 莫蘭迪綠 */
+      --text: #0f172a;               /* 深灰藍文字 */
+      --text-muted: #64748b;         /* 灰藍次要文字 */
+      --danger: #f43f5e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -27,8 +28,8 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(at 10% 10%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(217, 119, 6, 0.06) 0px, transparent 50%);
+        radial-gradient(at 10% 10%, rgba(51, 65, 85, 0.05) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(217, 119, 6, 0.04) 0px, transparent 50%);
       background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
@@ -36,7 +37,7 @@
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -49,11 +50,11 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 12px;
-      border-bottom: 2px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
     }
 
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--primary);
       letter-spacing: 0.5px;
@@ -112,11 +113,11 @@
       border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     }
 
     .card-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       margin-bottom: 16px;
       color: var(--primary);
@@ -133,7 +134,7 @@
     }
 
     input, select {
-      background: #f8fafc;
+      background: var(--panel-sub);
       border: 1px solid var(--card-border);
       color: var(--text);
       padding: 9px 12px;
@@ -154,7 +155,7 @@
 
     /* 清單項目 */
     .list-item {
-      background: #f8fafc;
+      background: var(--panel-sub);
       padding: 12px 14px;
       border-radius: 10px;
       margin-bottom: 8px;
@@ -178,7 +179,7 @@
     }
 
     .deck-card {
-      background: #f8fafc;
+      background: var(--panel-sub);
       border: 1px solid var(--card-border);
       padding: 16px;
       border-radius: 12px;
@@ -202,7 +203,7 @@
     }
 
     .quiz-box {
-      background: #f8fafc;
+      background: var(--panel-sub);
       border-radius: 12px;
       padding: 16px;
       text-align: center;
@@ -210,9 +211,9 @@
       border: 1px solid var(--card-border);
     }
 
-    /* 統計面板小框 */
+    /* 統計小方塊 */
     .stat-box {
-      background: #f8fafc;
+      background: var(--panel-sub);
       border: 1px solid var(--card-border);
       padding: 12px;
       border-radius: 10px;
@@ -229,7 +230,7 @@
 
     .calc-screen {
       grid-column: span 4;
-      background: #f8fafc;
+      background: var(--panel-sub);
       border: 1px solid var(--card-border);
       color: var(--primary);
       font-family: monospace;
@@ -240,7 +241,7 @@
     }
 
     .btn-calc {
-      background: #f1f5f9;
+      background: #e2e8f0;
       color: var(--text);
       padding: 14px;
       font-size: 1.1rem;
@@ -248,7 +249,7 @@
 
     .btn-calc-op { background: var(--primary); color: #ffffff; }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
-    .chart-container { position: relative; height: 260px; width: 100%; }
+    .chart-container { position: relative; height: 220px; width: 100%; }
     .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
   </style>
 </head>
@@ -256,7 +257,7 @@
 
   <div class="container">
     <header>
-      <h1>🌊 群青 Workspace</h1>
+      <h1>🌫️ Aura Workspace</h1>
       <div class="user-section">
         <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">未登入</span>
         <input type="text" id="usernameInput" placeholder="使用者" style="width: 90px;">
@@ -264,40 +265,37 @@
       </div>
     </header>
 
-    <!-- 分頁選單 -->
+    <!-- 分頁導覽按鈕 -->
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 詞性單字本</button>
       <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 作息輪盤</button>
-      <button class="tab-btn" onclick="switchTab('statsTab')">📊 數據分析</button>
+      <button class="tab-btn" onclick="switchTab('statsTab')">📊 專注分析</button>
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
     <!-- 分頁 1: 詞性單字本 -->
     <div id="vocabTab" class="tab-content active">
-      <!-- 視圖 A: 單字本列表 -->
       <div id="deckListView" class="card">
         <div class="card-title">
           <span>📚 我的單字本庫</span>
         </div>
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 西班牙語日常單字)" style="flex:1;">
+          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 西班牙語單字)" style="flex:1;">
           <button onclick="createDeck()">建立單字本</button>
         </div>
         <div class="deck-grid" id="deckGrid"></div>
       </div>
 
-      <!-- 視圖 B: 單字本內部 -->
       <div id="deckDetailView" class="card" style="display: none;">
         <div class="card-title">
           <span id="currentDeckTitle">單字本內容</span>
           <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
         </div>
 
-        <div style="font-size: 0.85rem; color: var(--sandy-gold); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
+        <div style="font-size: 0.85rem; color: var(--gold); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
 
-        <!-- 新增單字 (含詞性) -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
@@ -320,7 +318,6 @@
           </div>
         </div>
 
-        <!-- 測驗區域 -->
         <div class="quiz-box">
           <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
             <button style="font-size: 0.8rem;" onclick="startQuiz('en-zh')">英翻中</button>
@@ -340,41 +337,53 @@
       </div>
     </div>
 
-    <!-- 分頁 2: 習慣追蹤與統計數據比較 -->
+    <!-- 分頁 2: 習慣追蹤與獨立數據統計專區 -->
     <div id="habitTab" class="tab-content">
-      <div class="grid-2">
-        <!-- 習慣打卡清單 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- 上卡片：打卡與習慣清單 -->
         <div class="card">
           <div class="card-title">🔥 每日習慣追蹤 (Habit Tracker)</div>
           <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <input type="text" id="habitInput" placeholder="新增習慣 (例如: 每日背 10 個單字)..." style="flex: 1;">
-            <button onclick="addHabit()">新增</button>
+            <input type="text" id="habitInput" placeholder="新增習慣 (例如: 每日閱讀 20 分鐘)..." style="flex: 1;">
+            <button onclick="addHabit()">新增習慣</button>
           </div>
-          <div id="habitList" style="max-height: 300px; overflow-y: auto;"></div>
+          <div id="habitList" style="max-height: 250px; overflow-y: auto;"></div>
         </div>
 
-        <!-- 習慣統計與天數比較圖表 -->
+        <!-- 下卡片：習慣統計與天數比較區域 -->
         <div class="card">
-          <div class="card-title">📊 習慣打卡天數比較</div>
+          <div class="card-title">📊 習慣追蹤數據統計與比較</div>
           
-          <!-- 頂部三個數據指標 -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+          <!-- 3 個關鍵數據指標框 -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
             <div class="stat-box">
-              <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary);" id="statTotalHabits">0</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">習慣總數</div>
+              <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary);" id="statTotalHabits">0</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">追蹤習慣總數</div>
             </div>
             <div class="stat-box">
-              <div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);" id="statTodayCheckRate">0%</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">今日打卡率</div>
+              <div style="font-size: 1.3rem; font-weight: bold; color: var(--green);" id="statTodayRate">0%</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">今日完成率</div>
             </div>
             <div class="stat-box">
-              <div style="font-size: 1.2rem; font-weight: bold; color: var(--sandy-gold);" id="statMaxStreak">0天</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">最高連續</div>
+              <div style="font-size: 1.3rem; font-weight: bold; color: var(--gold);" id="statMaxStreak">0 天</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">最高連續打卡</div>
             </div>
           </div>
 
-          <div class="chart-container" style="height: 180px;">
-            <canvas id="habitCompareChart"></canvas>
+          <!-- 雙圖表比較區塊 -->
+          <div class="grid-2">
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center;">各習慣連續打卡天數比較</div>
+              <div class="chart-container" style="height: 200px;">
+                <canvas id="habitBarChart"></canvas>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-align: center;">今日打卡完成比例</div>
+              <div class="chart-container" style="height: 200px;">
+                <canvas id="habitPieChart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -418,7 +427,7 @@
     <!-- 分頁 5: 數據分析 -->
     <div id="statsTab" class="tab-content">
       <div class="card">
-        <div class="card-title">📊 專注與習慣趨勢</div>
+        <div class="card-title">📊 專注趨勢分析</div>
         <div class="chart-container">
           <canvas id="statsChart"></canvas>
         </div>
@@ -467,7 +476,8 @@
     let currentDeckId = null;
     let wheelChartInstance = null;
     let statsChartInstance = null;
-    let habitCompareChartInstance = null;
+    let habitBarChartInstance = null;
+    let habitPieChartInstance = null;
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -475,7 +485,7 @@
       document.getElementById(tabId).classList.add('active');
       event.target.classList.add('active');
 
-      if (tabId === 'habitTab') renderHabitCompareChart();
+      if (tabId === 'habitTab') renderHabitCharts();
       if (tabId === 'timeTab') renderWheelChart();
       if (tabId === 'statsTab') renderStatsChart();
     }
@@ -506,8 +516,9 @@
         { id: 1, name: "預設單字本", vocabs: [] }
       ];
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [
-        { id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: todayStr },
-        { id: 2, name: "喝水 2000cc", streak: 5, lastChecked: "" }
+        { id: 1, name: "每日背單字 15 分鐘", streak: 4, lastChecked: todayStr },
+        { id: 2, name: "喝水 2000cc", streak: 6, lastChecked: "" },
+        { id: 3, name: "閱讀 20 分鐘", streak: 2, lastChecked: todayStr }
       ];
       todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [
         { id: 1, text: "完成今天的學習打卡", done: false }
@@ -521,7 +532,7 @@
       renderTodos();
       renderTimeLogs();
       renderWheelChart();
-      renderHabitCompareChart();
+      renderHabitCharts();
     }
 
     function saveUserData() {
@@ -533,7 +544,7 @@
       renderHabits();
       renderTodos();
       renderTimeLogs();
-      renderHabitCompareChart();
+      renderHabitCharts();
       if (currentDeckId) renderDeckDetail();
     }
 
@@ -717,7 +728,7 @@
       }
     }
 
-    // --- 習慣追蹤 (Habit Tracker) & 數據統計圖表 ---
+    // --- 習慣追蹤 (Habit Tracker) 與統計比較邏輯 ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
@@ -753,7 +764,7 @@
             <div>
               <strong style="color:var(--primary);">${h.name}</strong>
               <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
-                🔥 連續打卡：<span style="color:var(--sandy-gold); font-weight:bold;">${h.streak}</span> 天
+                🔥 連續打卡：<span style="color:var(--gold); font-weight:bold;">${h.streak}</span> 天
               </div>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
@@ -767,47 +778,67 @@
       }).join('');
     }
 
-    // 繪製習慣打卡天數比較圖表 (Bar Chart)
-    function renderHabitCompareChart() {
-      // 計算指標數據
+    // 渲染習慣雙統計圖表（橫向長條比較 + 圓餅佔比）
+    function renderHabitCharts() {
       document.getElementById('statTotalHabits').innerText = habits.length;
       const checkedTodayCount = habits.filter(h => h.lastChecked === todayStr).length;
       const rate = habits.length === 0 ? 0 : Math.round((checkedTodayCount / habits.length) * 100);
-      document.getElementById('statTodayCheckRate').innerText = `${rate}%`;
+      document.getElementById('statTodayRate').innerText = `${rate}%`;
 
       const maxStreak = habits.length === 0 ? 0 : Math.max(...habits.map(h => h.streak));
-      document.getElementById('statMaxStreak').innerText = `${maxStreak}天`;
+      document.getElementById('statMaxStreak').innerText = `${maxStreak} 天`;
 
-      const ctx = document.getElementById('habitCompareChart');
-      if (!ctx) return;
-      if (habitCompareChartInstance) habitCompareChartInstance.destroy();
-
-      const labels = habits.map(h => h.name);
-      const dataValues = habits.map(h => h.streak);
-
-      habitCompareChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels.length ? labels : ['無資料'],
-          datasets: [{
-            label: '連續打卡天數',
-            data: dataValues.length ? dataValues : [0],
-            backgroundColor: 'rgba(30, 64, 175, 0.75)',
-            borderColor: '#1e40af',
-            borderWidth: 1,
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: '#64748b' }, grid: { display: false } },
-            y: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: 'rgba(203, 213, 225, 0.5)' } }
+      // 圖表 1: 習慣天數長條比較圖
+      const ctxBar = document.getElementById('habitBarChart');
+      if (ctxBar) {
+        if (habitBarChartInstance) habitBarChartInstance.destroy();
+        habitBarChartInstance = new Chart(ctxBar, {
+          type: 'bar',
+          data: {
+            labels: habits.length ? habits.map(h => h.name) : ['無習慣'],
+            datasets: [{
+              label: '連續天數',
+              data: habits.length ? habits.map(h => h.streak) : [0],
+              backgroundColor: '#334155',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#e2e8f0' } },
+              y: { ticks: { color: '#64748b' }, grid: { display: false } }
+            }
           }
-        }
-      });
+        });
+      }
+
+      // 圖表 2: 今日打卡圓餅占比圖
+      const ctxPie = document.getElementById('habitPieChart');
+      if (ctxPie) {
+        if (habitPieChartInstance) habitPieChartInstance.destroy();
+        const uncheckCount = habits.length - checkedTodayCount;
+        habitPieChartInstance = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: {
+            labels: ['已完成打卡', '未完成打卡'],
+            datasets: [{
+              data: habits.length ? [checkedTodayCount, uncheckCount] : [0, 1],
+              backgroundColor: ['#0d9488', '#cbd5e1'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#64748b' } } }
+          }
+        });
+      }
     }
 
     // --- To-Do List ---
@@ -865,7 +896,7 @@
           labels: labels.length ? labels : ['尚未規劃'],
           datasets: [{
             data: dataValues.length ? dataValues : [1],
-            backgroundColor: ['#1e40af', '#0284c7', '#d97706', '#ef4444', '#10b981'],
+            backgroundColor: ['#334155', '#475569', '#0d9488', '#d97706', '#94a3b8'],
             borderWidth: 2,
             borderColor: '#ffffff'
           }]
@@ -890,8 +921,8 @@
           datasets: [{
             label: '每日專注小時',
             data: [4, 5.5, 6, 7, 5, 8, 6.5],
-            borderColor: '#1e40af',
-            backgroundColor: 'rgba(30, 64, 175, 0.1)',
+            borderColor: '#334155',
+            backgroundColor: 'rgba(51, 65, 85, 0.1)',
             fill: true,
             tension: 0.4
           }]
@@ -901,8 +932,8 @@
           maintainAspectRatio: false,
           plugins: { legend: { labels: { color: '#0f172a' } } },
           scales: {
-            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(203, 213, 225, 0.5)' } },
-            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(203, 213, 225, 0.5)' } }
+            x: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
           }
         }
       });
