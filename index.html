@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura - 莫蘭迪極致學習與習慣空間</title>
+  <title>Aura Workspace - 完整版</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f8fafc;
-      --panel: rgba(255, 255, 255, 0.85);
+      --panel: #ffffff;
       --panel-sub: #f1f5f9;
-      --card-border: rgba(203, 213, 225, 0.6);
+      --card-border: #e2e8f0;
       --primary: #334155;
       --primary-hover: #1e293b;
       --accent: #0d9488;
@@ -26,10 +26,6 @@
 
     body {
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(13, 148, 136, 0.05) 0px, transparent 50%);
-      background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
       padding: 24px 12px;
@@ -55,7 +51,6 @@
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--primary);
-      letter-spacing: -0.5px;
     }
 
     .user-section {
@@ -69,7 +64,7 @@
       gap: 8px;
       background: #e2e8f0;
       padding: 6px;
-      border-radius: 14px;
+      border-radius: 12px;
       border: 1px solid var(--card-border);
       overflow-x: auto;
     }
@@ -82,9 +77,8 @@
       color: var(--text-muted);
       font-weight: 600;
       font-size: 0.88rem;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.25 ease;
       white-space: nowrap;
     }
 
@@ -92,7 +86,7 @@
     .tab-btn.active {
       background: #ffffff;
       color: var(--primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       font-weight: 700;
     }
 
@@ -107,11 +101,10 @@
 
     .card {
       background: var(--panel);
-      backdrop-filter: blur(12px);
       border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
     }
 
     .card-title {
@@ -126,7 +119,7 @@
 
     input, select, button {
       font-size: 14px;
-      border-radius: 10px;
+      border-radius: 8px;
       outline: none;
       transition: all 0.2s;
     }
@@ -138,8 +131,6 @@
       padding: 9px 12px;
     }
 
-    input:focus, select:focus { border-color: var(--purple); background: #ffffff; }
-
     button {
       background: var(--primary);
       color: #ffffff;
@@ -149,36 +140,14 @@
       font-weight: 600;
     }
 
-    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    button:hover { background: var(--primary-hover); }
 
     .list-item {
       background: var(--panel-sub);
       padding: 12px 14px;
-      border-radius: 12px;
-      margin-bottom: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
       border: 1px solid var(--card-border);
-    }
-
-    .deck-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    .deck-card {
-      background: var(--panel-sub);
-      border: 1px solid var(--card-border);
-      padding: 18px;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .deck-card:hover {
-      border-color: var(--purple);
-      transform: translateY(-2px);
-      background: #ffffff;
     }
 
     .pos-badge {
@@ -186,12 +155,11 @@
       color: #ffffff;
       font-size: 0.72rem;
       padding: 2px 6px;
-      border-radius: 6px;
+      border-radius: 4px;
       margin-right: 6px;
       font-weight: 600;
     }
 
-    /* 艾賓浩斯 7 階段勾選樣式 */
     .ebbinghaus-steps {
       display: flex;
       gap: 6px;
@@ -206,9 +174,6 @@
       padding: 3px 8px;
       border-radius: 6px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
       color: var(--text-muted);
     }
 
@@ -218,11 +183,20 @@
       border-color: var(--accent);
     }
 
+    .quiz-box {
+      background: var(--panel-sub);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 15px;
+      border: 1px solid var(--card-border);
+    }
+
     .stat-box {
       background: var(--panel-sub);
       border: 1px solid var(--card-border);
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 10px;
       text-align: center;
     }
 
@@ -242,14 +216,13 @@
       font-size: 1.8rem;
       text-align: right;
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     .btn-calc { background: #e2e8f0; color: var(--text); padding: 14px; font-size: 1.1rem; }
     .btn-calc-op { background: var(--primary); color: #ffffff; }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 210px; width: 100%; }
-    .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--purple); }
   </style>
 </head>
 <body>
@@ -265,36 +238,40 @@
     </header>
 
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 階段單字本</button>
+      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 背單字與測驗</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 雙作息圓盤</button>
-      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤統計</button>
+      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
       <button class="tab-btn" onclick="switchTab('statsTab')">📊 專注分析</button>
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 單字本與艾賓浩斯 7 階段 -->
+    <!-- 分頁 1: 背單字與測驗 (直接展示) -->
     <div id="vocabTab" class="tab-content active">
-      <div id="deckListView" class="card">
-        <div class="card-title">📚 我的單字本庫</div>
-        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-          <input type="text" id="newDeckName" placeholder="單字本名稱 (如: 多益、西班牙文)" style="flex:1;">
-          <button onclick="createDeck()">建立單字本</button>
+      <div class="card">
+        <div class="card-title">📖 艾賓浩斯 7 階段背單字與測驗</div>
+
+        <!-- 測驗區域 -->
+        <div class="quiz-box">
+          <div style="font-weight: 600; margin-bottom: 8px; color: var(--primary);">🧠 單字背誦與測驗模式</div>
+          <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
+            <button style="font-size: 0.8rem;" onclick="startQuiz('en-zh')">英翻中</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('zh-en')">中翻英</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('audio')">🔊 聽力</button>
+            <button style="font-size: 0.8rem;" onclick="startQuiz('spelling')">⌨️ 拼字</button>
+          </div>
+          <div id="quizArea" style="display: none;">
+            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;" id="quizQuestion">---</div>
+            <div id="quizInputArea" style="margin-bottom: 10px;"></div>
+            <button onclick="checkAnswer()">提交答案</button>
+            <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
+          </div>
         </div>
-        <div class="deck-grid" id="deckGrid"></div>
-      </div>
 
-      <div id="deckDetailView" class="card" style="display: none;">
-        <div class="card-title">
-          <span id="currentDeckTitle">單字本內容</span>
-          <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
-        </div>
-
-        <div style="font-size: 0.85rem; color: var(--purple); margin-bottom: 12px; font-weight: 600;" id="deckProgress">學習進度：0%</div>
-
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+        <!-- 新增單字輸入區 -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
+            <input type="text" id="vocabWord" placeholder="英文單字 (如: apple)" style="flex:2; min-width: 120px;">
             <select id="vocabPOS" style="flex:1; min-width: 90px;">
               <option value="n.">n. 名詞</option>
               <option value="v.">v. 動詞</option>
@@ -303,21 +280,20 @@
               <option value="prep.">prep. 介系詞</option>
               <option value="conj.">conj. 連接詞</option>
               <option value="phr.">phr. 片語</option>
-              <option value="other">其他</option>
             </select>
-            <input type="text" id="vocabMeaning" placeholder="中文解釋" style="flex:2; min-width: 120px;">
+            <input type="text" id="vocabMeaning" placeholder="中文解釋 (如: 蘋果)" style="flex:2; min-width: 120px;">
             <button onclick="addVocab()">新增單字</button>
           </div>
         </div>
 
-        <div style="margin-top: 15px; max-height: 380px; overflow-y: auto;" id="vocabList"></div>
+        <!-- 單字列表與 7 階段打卡 -->
+        <div style="max-height: 380px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
 
-    <!-- 分頁 2: 雙作息圓盤（預計 vs 實際） -->
+    <!-- 分頁 2: 雙作息圓盤 -->
     <div id="timeTab" class="tab-content">
       <div class="grid-2">
-        <!-- 預計輪盤 -->
         <div class="card">
           <div class="card-title">🎯 預計作息圓盤</div>
           <div class="chart-container"><canvas id="targetWheelChart"></canvas></div>
@@ -330,7 +306,6 @@
           <div id="targetList" style="max-height: 120px; overflow-y: auto; margin-top: 8px;"></div>
         </div>
 
-        <!-- 實際輪盤 -->
         <div class="card">
           <div class="card-title">✅ 實際執行圓盤</div>
           <div class="chart-container"><canvas id="actualWheelChart"></canvas></div>
@@ -345,7 +320,7 @@
       </div>
     </div>
 
-    <!-- 分頁 3: 習慣追蹤與統計 -->
+    <!-- 分頁 3: 習慣追蹤 -->
     <div id="habitTab" class="tab-content">
       <div style="display: flex; flex-direction: column; gap: 20px;">
         <div class="card">
@@ -381,7 +356,7 @@
       </div>
     </div>
 
-    <!-- 分頁 5: 專注數據分析 -->
+    <!-- 分頁 5: 數據分析 -->
     <div id="statsTab" class="tab-content">
       <div class="card">
         <div class="card-title">📊 每日實際專注時數趨勢</div>
@@ -425,14 +400,13 @@
 
   <script>
     let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
-    let currentDeckId = null;
-
     let targetWheelChartInstance = null;
     let actualWheelChartInstance = null;
     let habitBarChartInstance = null;
     let statsChartInstance = null;
 
     const todayStr = new Date().toISOString().split('T')[0];
+    const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -458,23 +432,22 @@
       document.getElementById('userStatus').innerText = `👤 使用者: ${currentUser}`;
     }
 
-    // --- 資料結構 ---
-    let decks = [];
+    let vocabs = [];
     let habits = [];
     let todos = [];
     let targetLogs = [];
     let actualLogs = [];
 
-    const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
-
     function loadUserData() {
-      decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [{ id: 1, name: "預設單字本", vocabs: [] }];
+      vocabs = JSON.parse(localStorage.getItem(`vocabs_${currentUser}`)) || [
+        { id: 1, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] }
+      ];
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
       todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
       targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
       actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
 
-      renderDecks();
+      renderVocabs();
       renderHabits();
       renderTodos();
       renderDoubleWheels();
@@ -482,64 +455,51 @@
     }
 
     function saveUserData() {
-      localStorage.setItem(`decks_${currentUser}`, JSON.stringify(decks));
+      localStorage.setItem(`vocabs_${currentUser}`, JSON.stringify(vocabs));
       localStorage.setItem(`habits_${currentUser}`, JSON.stringify(habits));
       localStorage.setItem(`todos_${currentUser}`, JSON.stringify(todos));
       localStorage.setItem(`targetLogs_${currentUser}`, JSON.stringify(targetLogs));
       localStorage.setItem(`actualLogs_${currentUser}`, JSON.stringify(actualLogs));
 
-      renderDecks();
+      renderVocabs();
       renderHabits();
       renderTodos();
       renderDoubleWheels();
       renderHabitCharts();
-      if (currentDeckId) renderDeckDetail();
     }
 
-    // --- 單字本與艾賓浩斯 7 階段獨立勾選 ---
-    function createDeck() {
-      const name = document.getElementById('newDeckName').value.trim();
-      if (!name) return;
-      decks.push({ id: Date.now(), name, vocabs: [] });
-      document.getElementById('newDeckName').value = '';
+    // --- 單字本與測驗 ---
+    function addVocab() {
+      const word = document.getElementById('vocabWord').value.trim();
+      const pos = document.getElementById('vocabPOS').value;
+      const meaning = document.getElementById('vocabMeaning').value.trim();
+      if (!word || !meaning) return;
+
+      vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
+      document.getElementById('vocabWord').value = '';
+      document.getElementById('vocabMeaning').value = '';
       saveUserData();
     }
 
-    function openDeck(id) {
-      currentDeckId = id;
-      document.getElementById('deckListView').style.display = 'none';
-      document.getElementById('deckDetailView').style.display = 'block';
-      renderDeckDetail();
+    function toggleEbStep(vocabId, stepIndex) {
+      const v = vocabs.find(item => item.id === vocabId);
+      if (v) {
+        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
+        v.steps[stepIndex] = !v.steps[stepIndex];
+      }
+      saveUserData();
     }
 
-    function backToDecks() {
-      currentDeckId = null;
-      document.getElementById('deckDetailView').style.display = 'none';
-      document.getElementById('deckListView').style.display = 'block';
-      renderDecks();
+    function deleteVocab(vocabId) {
+      vocabs = vocabs.filter(item => item.id !== vocabId);
+      saveUserData();
     }
 
-    function renderDecks() {
-      const grid = document.getElementById('deckGrid');
-      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">尚無單字本</p>' : '';
-      grid.innerHTML = decks.map(d => `
-        <div class="deck-card" onclick="openDeck(${d.id})">
-          <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
-          <div style="font-size:0.8rem; color:var(--text-muted);">${d.vocabs.length} 個單字</div>
-        </div>
-      `).join('');
-    }
-
-    function renderDeckDetail() {
-      const deck = decks.find(d => d.id === currentDeckId);
-      if (!deck) return;
-
-      document.getElementById('currentDeckTitle').innerText = `📖 ${deck.name}`;
-      
+    function renderVocabs() {
       const list = document.getElementById('vocabList');
-      list.innerHTML = deck.vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前無內容</p>' : '';
+      list.innerHTML = vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">目前無單字，請新增！</p>' : '';
       
-      list.innerHTML = deck.vocabs.map(v => {
+      list.innerHTML = vocabs.map(v => {
         const stepsHtml = ebStages.map((stage, idx) => {
           const isChecked = v.steps && v.steps[idx];
           return `<span class="eb-step ${isChecked ? 'checked' : ''}" onclick="toggleEbStep(${v.id}, ${idx})">${isChecked ? '✓' : '○'} ${stage}</span>`;
@@ -549,7 +509,7 @@
           <div class="list-item">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div>
-                <span class="pos-badge">${v.pos}</span>
+                <span class="pos-badge">${v.pos || 'n.'}</span>
                 <strong style="color:var(--primary); font-size:1.05rem;">${v.word}</strong> - <span>${v.meaning}</span>
               </div>
               <button class="btn-delete" onclick="deleteVocab(${v.id})">✕</button>
@@ -560,36 +520,58 @@
       }).join('');
     }
 
-    function addVocab() {
-      const word = document.getElementById('vocabWord').value.trim();
-      const pos = document.getElementById('vocabPOS').value;
-      const meaning = document.getElementById('vocabMeaning').value.trim();
-      if (!word || !meaning || !currentDeckId) return;
-
-      const deck = decks.find(d => d.id === currentDeckId);
-      deck.vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
-      document.getElementById('vocabWord').value = '';
-      document.getElementById('vocabMeaning').value = '';
-      saveUserData();
+    // 測驗邏輯
+    let currentQuizMode = '', currentQuizItem = null;
+    function startQuiz(mode) {
+      if (vocabs.length === 0) { alert("請先新增單字！"); return; }
+      currentQuizMode = mode;
+      document.getElementById('quizArea').style.display = 'block';
+      nextQuestion();
     }
 
-    function toggleEbStep(vocabId, stepIndex) {
-      const deck = decks.find(d => d.id === currentDeckId);
-      const v = deck.vocabs.find(item => item.id === vocabId);
-      if (v) {
-        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
-        v.steps[stepIndex] = !v.steps[stepIndex];
+    function nextQuestion() {
+      document.getElementById('quizResult').innerText = '';
+      currentQuizItem = vocabs[Math.floor(Math.random() * vocabs.length)];
+      const qText = document.getElementById('quizQuestion');
+      const inputArea = document.getElementById('quizInputArea');
+
+      if (currentQuizMode === 'en-zh') {
+        qText.innerText = `英文：[${currentQuizItem.pos}] ${currentQuizItem.word}`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入中文翻譯..." style="width: 80%;">`;
+      } else if (currentQuizMode === 'zh-en') {
+        qText.innerText = `中文：${currentQuizItem.meaning} (${currentQuizItem.pos})`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入英文單字..." style="width: 80%;">`;
+      } else if (currentQuizMode === 'audio') {
+        qText.innerText = `🔊 聽力測試 (${currentQuizItem.pos})`;
+        speakWord(currentQuizItem.word);
+        inputArea.innerHTML = `<button onclick="speakWord('${currentQuizItem.word}')">再次播放 🔊</button><br><input type="text" id="quizAnswer" placeholder="輸入聽到的英文..." style="width: 80%; margin-top: 8px;">`;
+      } else if (currentQuizMode === 'spelling') {
+        qText.innerText = `拼字：${currentQuizItem.meaning} [${currentQuizItem.pos}]`;
+        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="正確拼出英文..." style="width: 80%;">`;
       }
-      saveUserData();
     }
 
-    function deleteVocab(vocabId) {
-      const deck = decks.find(d => d.id === currentDeckId);
-      deck.vocabs = deck.vocabs.filter(item => item.id !== vocabId);
-      saveUserData();
+    function speakWord(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      synth.speak(utter);
     }
 
-    // --- 雙作息圓盤（預計 vs 實際） ---
+    function checkAnswer() {
+      const userAns = document.getElementById('quizAnswer').value.trim().toLowerCase();
+      const res = document.getElementById('quizResult');
+      let isCorrect = (currentQuizMode === 'en-zh') ? currentQuizItem.meaning.includes(userAns) : (userAns === currentQuizItem.word.toLowerCase());
+
+      if (isCorrect) {
+        res.innerHTML = `<span style="color:var(--accent);">🎉 正確！${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+        setTimeout(nextQuestion, 1200);
+      } else {
+        res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！答案：${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+      }
+    }
+
+    // --- 雙作息圓盤 ---
     function addTargetTime() {
       const name = document.getElementById('targetName').value.trim();
       const start = document.getElementById('targetStart').value;
@@ -639,7 +621,7 @@
       setInstance(newInst);
     }
 
-    // --- 習慣與專注數據 ---
+    // --- 習慣與 To-Do ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
@@ -653,8 +635,7 @@
     }
 
     function renderHabits() {
-      const container = document.getElementById('habitList');
-      container.innerHTML = habits.map(h => `
+      document.getElementById('habitList').innerHTML = habits.map(h => `
         <div class="list-item" style="display:flex; justify-content:space-between; align-items:center;">
           <div><strong>${h.name}</strong> <span style="font-size:0.8rem; color:var(--gold);">🔥 ${h.streak}天</span></div>
           <button style="font-size:0.78rem;" onclick="checkInHabit(${h.id})">${h.lastChecked === todayStr ? '✅ 已打卡' : '📌 打卡'}</button>
@@ -681,7 +662,6 @@
       });
     }
 
-    // --- To-Do ---
     function addTodo() {
       const text = document.getElementById('todoInput').value.trim();
       if (!text) return;
@@ -713,7 +693,6 @@
       });
     }
 
-    // --- 計算機 ---
     let calcExpr = '';
     function calcInput(val) {
       const screen = document.getElementById('calcScreen');
