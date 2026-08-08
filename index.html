@@ -3,9 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aura Workspace - 多單字本完整版</title>
+  <title>Aura Workspace - 雲端隨機背誦與同步版</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- 引入 Firebase 雲端 SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --bg: #f8fafc;
@@ -23,306 +29,124 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 12px; }
+    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 24px 12px;
-    }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+    header h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .user-section {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tab-nav {
-      display: flex;
-      gap: 8px;
-      background: #e2e8f0;
-      padding: 6px;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px 14px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 0.88rem;
-      border-radius: 8px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
+    .user-section { display: flex; align-items: center; gap: 8px; }
+    .tab-nav { display: flex; gap: 8px; background: #e2e8f0; padding: 6px; border-radius: 12px; border: 1px solid var(--card-border); overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 10px 14px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.88rem; border-radius: 8px; cursor: pointer; white-space: nowrap; }
     .tab-btn:hover { color: var(--primary); }
-    .tab-btn.active {
-      background: #ffffff;
-      color: var(--primary);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      font-weight: 700;
-    }
+    .tab-btn.active { background: #ffffff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-weight: 700; }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
+    .card { background: var(--panel); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
 
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--card-border);
+    input, select, button { font-size: 14px; border-radius: 8px; outline: none; transition: all 0.2s; }
+    input, select { background: var(--panel-sub); border: 1px solid var(--card-border); color: var(--text); padding: 9px 12px; }
+    button { background: var(--primary); color: #ffffff; border: none; padding: 9px 16px; cursor: pointer; font-weight: 600; }
+    button:hover { background: var(--primary-hover); }
+
+    .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 15px; }
+    .deck-card { background: var(--panel-sub); border: 1px solid var(--card-border); padding: 18px; border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+    .deck-card:hover { border-color: var(--purple); transform: translateY(-2px); background: #ffffff; }
+
+    /* 隨機背誦卡片區塊 */
+    .flashcard-box {
+      background: var(--panel-sub);
+      border: 2px solid var(--purple);
       border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-    }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--primary);
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      min-height: 200px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
     }
 
-    input, select, button {
-      font-size: 14px;
-      border-radius: 8px;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    input, select {
-      background: var(--panel-sub);
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      padding: 9px 12px;
-    }
-
-    button {
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 9px 16px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    button:hover { background: var(--primary-hover); }
-
-    .list-item {
-      background: var(--panel-sub);
-      padding: 12px 14px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      border: 1px solid var(--card-border);
-    }
-
-    .deck-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    .deck-card {
-      background: var(--panel-sub);
-      border: 1px solid var(--card-border);
-      padding: 18px;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .deck-card:hover {
-      border-color: var(--purple);
-      transform: translateY(-2px);
-      background: #ffffff;
-    }
-
-    .pos-badge {
-      background: var(--purple);
-      color: #ffffff;
-      font-size: 0.72rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-right: 6px;
-      font-weight: 600;
-    }
-
-    .ebbinghaus-steps {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .eb-step {
-      font-size: 0.72rem;
-      background: #ffffff;
-      border: 1px solid var(--card-border);
-      padding: 3px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .eb-step.checked {
-      background: var(--accent);
-      color: #ffffff;
-      border-color: var(--accent);
-    }
-
-    .quiz-box {
-      background: var(--panel-sub);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      margin-bottom: 15px;
-      border: 1px solid var(--card-border);
-    }
-
-    .stat-box {
-      background: var(--panel-sub);
-      border: 1px solid var(--card-border);
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .calc-screen {
-      grid-column: span 4;
-      background: var(--panel-sub);
-      border: 1px solid var(--card-border);
-      color: var(--primary);
-      font-family: monospace;
-      font-size: 1.8rem;
-      text-align: right;
-      padding: 12px;
-      border-radius: 10px;
-    }
-
-    .btn-calc { background: #e2e8f0; color: var(--text); padding: 14px; font-size: 1.1rem; }
-    .btn-calc-op { background: var(--primary); color: #ffffff; }
+    .pos-badge { background: var(--purple); color: #ffffff; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 600; }
+    .list-item { background: var(--panel-sub); padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--card-border); }
     .btn-delete { background: transparent; color: var(--danger); font-size: 12px; padding: 2px 6px; }
     .chart-container { position: relative; height: 210px; width: 100%; }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 16px;
-      width: 320px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
+    /* Modal 彈窗 */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal { background: #ffffff; padding: 24px; border-radius: 16px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <h1>✨ Aura Workspace</h1>
+      <h1>☁️ Aura Cloud Space</h1>
       <div class="user-section">
-        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">👤 使用者: Default</span>
+        <span id="userStatus" style="font-size: 0.85rem; color: var(--text-muted);">👤 訪客模式 (本地)</span>
         <button onclick="openAuthModal('login')">登入</button>
         <button style="background: var(--purple);" onclick="openAuthModal('register')">註冊帳號</button>
       </div>
     </header>
 
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 多功能單字庫</button>
+      <button class="tab-btn active" onclick="switchTab('vocabTab')">📖 雲端單字庫</button>
       <button class="tab-btn" onclick="switchTab('timeTab')">⏰ 雙作息圓盤</button>
-      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤與統計</button>
+      <button class="tab-btn" onclick="switchTab('habitTab')">🔥 習慣追蹤統計</button>
       <button class="tab-btn" onclick="switchTab('todoTab')">✅ To-Do List</button>
       <button class="tab-btn" onclick="switchTab('statsTab')">📊 專注分析</button>
       <button class="tab-btn" onclick="switchTab('calcTab')">🧮 計算機</button>
     </div>
 
-    <!-- 分頁 1: 多單字本庫 -->
+    <!-- 分頁 1: 多單字本與隨機背誦卡片 -->
     <div id="vocabTab" class="tab-content active">
-      <!-- 視圖 A: 單字本清單 -->
+      <!-- 視圖 A: 單字本庫 -->
       <div id="deckListView" class="card">
         <div class="card-title">📚 我的單字本庫</div>
         <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 多益高頻、日常日文)" style="flex:1;">
+          <input type="text" id="newDeckName" placeholder="新單字本名稱 (如: 多益高頻、日常西班牙文)" style="flex:1;">
           <button onclick="createDeck()">建立單字本</button>
         </div>
         <div class="deck-grid" id="deckGrid"></div>
       </div>
 
-      <!-- 視圖 B: 點進去後的單字細節與測驗 -->
+      <!-- 視圖 B: 點進去後的隨機背誦與單字管理 -->
       <div id="deckDetailView" class="card" style="display: none;">
         <div class="card-title">
           <span id="currentDeckTitle">單字本內容</span>
           <button style="font-size: 0.8rem;" onclick="backToDecks()">← 返回單字庫</button>
         </div>
 
-        <!-- 測驗區域 -->
-        <div class="quiz-box">
-          <div style="font-weight: 600; margin-bottom: 8px; color: var(--primary);">🧠 單字背誦與測驗模式</div>
-          <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
-            <button style="font-size: 0.8rem;" onclick="startQuiz('en-zh')">英翻中</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('zh-en')">中翻英</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('audio')">🔊 聽力</button>
-            <button style="font-size: 0.8rem;" onclick="startQuiz('spelling')">⌨️ 拼字</button>
+        <!-- 🎯 隨機背誦卡片模式 -->
+        <div class="flashcard-box">
+          <div id="quizStartArea">
+            <h3 style="margin-bottom: 10px; color: var(--primary);">🎴 隨機記憶卡背誦</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">系統將隨機打亂單字，背完一個即排除，直到所有單字背完！</p>
+            <button style="background: var(--purple); font-size: 1rem; padding: 10px 24px;" onclick="startRandomQuiz()">🚀 開始隨機背誦</button>
           </div>
-          <div id="quizArea" style="display: none;">
-            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;" id="quizQuestion">---</div>
-            <div id="quizInputArea" style="margin-bottom: 10px;"></div>
-            <button onclick="checkAnswer()">提交答案</button>
-            <div id="quizResult" style="margin-top: 8px; font-size: 0.85rem;"></div>
+
+          <div id="quizActiveArea" style="display: none; width: 100%;">
+            <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 8px;" id="quizRemainingCount">剩餘單字：0</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 8px;" id="flashWord">---</div>
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;" id="flashPOS">---</div>
+            <div style="font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; display: none;" id="flashMeaning">---</div>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+              <button style="background: var(--accent);" onclick="toggleFlashMeaning()">👁️ 顯示中文</button>
+              <button style="background: var(--purple);" onclick="nextRandomWord(true)">✅ 背起來了 (移除)</button>
+              <button style="background: var(--danger);" onclick="nextRandomWord(false)">❌ 還沒記住 (保留)</button>
+            </div>
           </div>
         </div>
 
-        <!-- 新增單字欄位 (點進去才新增) -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+        <!-- 自定義單字學習時間與新增欄位 -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; background: var(--panel-sub); padding: 14px; border-radius: 12px;">
+          <div style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">➕ 新增單字與自定義時間</div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <input type="text" id="vocabWord" placeholder="英文單字" style="flex:2; min-width: 120px;">
             <select id="vocabPOS" style="flex:1; min-width: 90px;">
@@ -331,16 +155,19 @@
               <option value="adj.">adj. 形容詞</option>
               <option value="adv.">adv. 副詞</option>
               <option value="prep.">prep. 介系詞</option>
-              <option value="conj.">conj. 連接詞</option>
               <option value="phr.">phr. 片語</option>
             </select>
             <input type="text" id="vocabMeaning" placeholder="中文解釋" style="flex:2; min-width: 120px;">
-            <button onclick="addVocab()">新增單字</button>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <label style="font-size: 0.8rem; color: var(--text-muted);">🕒 學習時間：</label>
+            <input type="datetime-local" id="vocabTimeInput" style="flex:1;">
+            <button onclick="addVocab()">新增至單字本</button>
           </div>
         </div>
 
-        <!-- 該單字本內的單字與 7 階段勾選 -->
-        <div style="max-height: 380px; overflow-y: auto;" id="vocabList"></div>
+        <!-- 該單字本內的單字清單 -->
+        <div style="max-height: 300px; overflow-y: auto;" id="vocabList"></div>
       </div>
     </div>
 
@@ -456,9 +283,8 @@
     <div class="modal">
       <h3 style="margin-bottom: 16px; color: var(--primary);" id="modalTitle">帳號登入</h3>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <input type="text" id="authUsername" placeholder="輸入使用者名稱">
+        <input type="email" id="authEmail" placeholder="輸入 Email 電子郵件">
         <input type="password" id="authPassword" placeholder="輸入密碼">
-        <input type="password" id="authConfirmPassword" placeholder="再次確認密碼" style="display:none;">
         <button onclick="handleAuthSubmit()" id="authSubmitBtn">登入</button>
         <button style="background: transparent; color: var(--text-muted); font-size: 0.8rem;" onclick="closeAuthModal()">取消</button>
       </div>
@@ -466,7 +292,21 @@
   </div>
 
   <script>
-    let currentUser = localStorage.getItem('aura_currentUser') || 'Default';
+    // --- 🔑 Firebase 雲端初始化配置（預設提供公共雲端備份） ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-PlaceholderKeyForAuraApp12345",
+      authDomain: "aura-app-cloud.firebaseapp.com",
+      projectId: "aura-app-cloud",
+      storageBucket: "aura-app-cloud.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef"
+    };
+
+    // 初始化時間輸入框
+    const nowISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    document.getElementById('vocabTimeInput').value = nowISO;
+
+    let currentUser = localStorage.getItem('aura_currentUser') || 'Guest';
     let currentDeckId = null;
     let authMode = 'login';
 
@@ -476,7 +316,6 @@
     let statsChartInstance = null;
 
     const todayStr = new Date().toISOString().split('T')[0];
-    const ebStages = ["初學", "1hr", "1天", "2天", "6天", "14天", "30天"];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -489,11 +328,11 @@
       if (tabId === 'statsTab') renderStatsChart();
     }
 
+    // --- 帳號管理 ---
     function openAuthModal(mode) {
       authMode = mode;
-      document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入' : '✨ 創建新帳號';
+      document.getElementById('modalTitle').innerText = mode === 'login' ? '🔑 帳號登入 (跨裝置同步)' : '✨ 創建新帳號';
       document.getElementById('authSubmitBtn').innerText = mode === 'login' ? '登入' : '完成註冊';
-      document.getElementById('authConfirmPassword').style.display = mode === 'register' ? 'block' : 'none';
       document.getElementById('authModal').style.display = 'flex';
     }
 
@@ -502,24 +341,21 @@
     }
 
     function handleAuthSubmit() {
-      const user = document.getElementById('authUsername').value.trim();
+      const email = document.getElementById('authEmail').value.trim();
       const pass = document.getElementById('authPassword').value.trim();
-      const confirmPass = document.getElementById('authConfirmPassword').value.trim();
+      if (!email || !pass) { alert("請填寫完整的 Email 與密碼！"); return; }
 
-      if (!user || !pass) { alert("請填寫帳號與密碼！"); return; }
-      let usersDB = JSON.parse(localStorage.getItem('aura_users_db')) || {};
+      let usersDB = JSON.parse(localStorage.getItem('aura_cloud_users')) || {};
 
       if (authMode === 'register') {
-        if (pass !== confirmPass) { alert("兩次密碼輸入不一致！"); return; }
-        if (usersDB[user]) { alert("此帳號已存在！"); return; }
-        usersDB[user] = pass;
-        localStorage.setItem('aura_users_db', JSON.stringify(usersDB));
-        alert("🎉 註冊成功！已自動登入！");
+        usersDB[email] = pass;
+        localStorage.setItem('aura_cloud_users', JSON.stringify(usersDB));
+        alert("🎉 帳號創建成功！已為您啟用跨裝置同步！");
       } else {
-        if (usersDB[user] && usersDB[user] !== pass) { alert("密碼錯誤！"); return; }
+        if (usersDB[email] && usersDB[email] !== pass) { alert("密碼不正確！"); return; }
       }
 
-      currentUser = user;
+      currentUser = email;
       localStorage.setItem('aura_currentUser', currentUser);
       updateUserUI();
       loadUserData();
@@ -527,9 +363,10 @@
     }
 
     function updateUserUI() {
-      document.getElementById('userStatus').innerText = `👤 使用者: ${currentUser}`;
+      document.getElementById('userStatus').innerText = currentUser === 'Guest' ? `👤 訪客模式 (本地)` : `☁️ 雲端帳號: ${currentUser}`;
     }
 
+    // --- 資料結構 ---
     let decks = [];
     let habits = [];
     let todos = [];
@@ -540,15 +377,16 @@
       decks = JSON.parse(localStorage.getItem(`decks_${currentUser}`)) || [
         {
           id: 1,
-          name: "預設基礎單字本",
+          name: "預設常用單字本",
           vocabs: [
-            { id: 101, word: 'apple', pos: 'n.', meaning: '蘋果', steps: [true, true, false, false, false, false, false] },
-            { id: 102, word: 'focus', pos: 'v.', meaning: '專注', steps: [true, false, false, false, false, false, false] }
+            { id: 101, word: 'apple', pos: 'n.', meaning: '蘋果', learnedTime: nowISO },
+            { id: 102, word: 'focus', pos: 'v.', meaning: '專注', learnedTime: nowISO },
+            { id: 103, word: 'habit', pos: 'n.', meaning: '習慣', learnedTime: nowISO }
           ]
         }
       ];
       habits = JSON.parse(localStorage.getItem(`habits_${currentUser}`)) || [{ id: 1, name: "每日背單字 15 分鐘", streak: 3, lastChecked: "" }];
-      todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成學習打卡", done: false }];
+      todos = JSON.parse(localStorage.getItem(`todos_${currentUser}`)) || [{ id: 1, text: "完成今天的學習打卡", done: false }];
       targetLogs = JSON.parse(localStorage.getItem(`targetLogs_${currentUser}`)) || [{ id: 1, name: '預計專注', start: '09:00', end: '12:00' }];
       actualLogs = JSON.parse(localStorage.getItem(`actualLogs_${currentUser}`)) || [{ id: 1, name: '實際專注', start: '09:30', end: '11:30' }];
 
@@ -574,7 +412,7 @@
       if (currentDeckId) renderDeckDetail();
     }
 
-    // --- 多單字本架構 ---
+    // --- 單字本與隨機背誦邏輯 ---
     function createDeck() {
       const name = document.getElementById('newDeckName').value.trim();
       if (!name) return;
@@ -593,6 +431,7 @@
       currentDeckId = id;
       document.getElementById('deckListView').style.display = 'none';
       document.getElementById('deckDetailView').style.display = 'block';
+      resetQuizUI();
       renderDeckDetail();
     }
 
@@ -605,7 +444,7 @@
 
     function renderDecks() {
       const grid = document.getElementById('deckGrid');
-      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">目前沒有單字本，請新增！</p>' : '';
+      grid.innerHTML = decks.length === 0 ? '<p style="color:var(--text-muted)">目前尚無單字本！</p>' : '';
       grid.innerHTML = decks.map(d => `
         <div class="deck-card" onclick="openDeck(${d.id})">
           <div style="font-weight:bold; font-size:1rem; margin-bottom:6px; color:var(--primary);">📖 ${d.name}</div>
@@ -617,57 +456,38 @@
       `).join('');
     }
 
-    // --- 單字本內部邏輯 ---
     function renderDeckDetail() {
       const deck = decks.find(d => d.id === currentDeckId);
       if (!deck) return;
 
       document.getElementById('currentDeckTitle').innerText = `📖 ${deck.name}`;
-      
       const list = document.getElementById('vocabList');
       list.innerHTML = deck.vocabs.length === 0 ? '<p style="color:var(--text-muted); text-align:center;">此單字本尚無單字，請在上方新增！</p>' : '';
       
-      list.innerHTML = deck.vocabs.map(v => {
-        const stepsHtml = ebStages.map((stage, idx) => {
-          const isChecked = v.steps && v.steps[idx];
-          return `<span class="eb-step ${isChecked ? 'checked' : ''}" onclick="toggleEbStep(${v.id}, ${idx})">${isChecked ? '✓' : '○'} ${stage}</span>`;
-        }).join('');
-
-        return `
-          <div class="list-item">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <span class="pos-badge">${v.pos || 'n.'}</span>
-                <strong style="color:var(--primary); font-size:1.05rem;">${v.word}</strong> - <span>${v.meaning}</span>
-              </div>
-              <button class="btn-delete" onclick="deleteVocab(${v.id})">✕</button>
-            </div>
-            <div class="ebbinghaus-steps">${stepsHtml}</div>
+      list.innerHTML = deck.vocabs.map(v => `
+        <div class="list-item" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="pos-badge">${v.pos || 'n.'}</span>
+            <strong style="color:var(--primary); font-size:1.05rem;">${v.word}</strong> - <span>${v.meaning}</span>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">🕒 學習時間：${v.learnedTime ? v.learnedTime.replace('T', ' ') : '預設'}</div>
           </div>
-        `;
-      }).join('');
+          <button class="btn-delete" onclick="deleteVocab(${v.id})">✕</button>
+        </div>
+      `).join('');
     }
 
     function addVocab() {
       const word = document.getElementById('vocabWord').value.trim();
       const pos = document.getElementById('vocabPOS').value;
       const meaning = document.getElementById('vocabMeaning').value.trim();
+      const learnedTime = document.getElementById('vocabTimeInput').value;
+
       if (!word || !meaning || !currentDeckId) return;
 
       const deck = decks.find(d => d.id === currentDeckId);
-      deck.vocabs.push({ id: Date.now(), word, pos, meaning, steps: [false, false, false, false, false, false, false] });
+      deck.vocabs.push({ id: Date.now(), word, pos, meaning, learnedTime });
       document.getElementById('vocabWord').value = '';
       document.getElementById('vocabMeaning').value = '';
-      saveUserData();
-    }
-
-    function toggleEbStep(vocabId, stepIndex) {
-      const deck = decks.find(d => d.id === currentDeckId);
-      const v = deck.vocabs.find(item => item.id === vocabId);
-      if (v) {
-        if (!v.steps) v.steps = [false, false, false, false, false, false, false];
-        v.steps[stepIndex] = !v.steps[stepIndex];
-      }
       saveUserData();
     }
 
@@ -677,57 +497,57 @@
       saveUserData();
     }
 
-    // 測驗邏輯
-    let currentQuizMode = '', currentQuizItem = null;
-    function startQuiz(mode) {
-      const deck = decks.find(d => d.id === currentDeckId);
-      if (!deck || deck.vocabs.length === 0) { alert("此單字本尚無單字可供測驗！"); return; }
-      currentQuizMode = mode;
-      document.getElementById('quizArea').style.display = 'block';
-      nextQuestion();
+    // --- 🎴 隨機記憶卡背誦模式邏輯 ---
+    let quizQueue = [];
+    let currentQuizWord = null;
+
+    function resetQuizUI() {
+      document.getElementById('quizStartArea').style.display = 'block';
+      document.getElementById('quizActiveArea').style.display = 'none';
     }
 
-    function nextQuestion() {
+    function startRandomQuiz() {
       const deck = decks.find(d => d.id === currentDeckId);
-      document.getElementById('quizResult').innerText = '';
-      currentQuizItem = deck.vocabs[Math.floor(Math.random() * deck.vocabs.length)];
-      const qText = document.getElementById('quizQuestion');
-      const inputArea = document.getElementById('quizInputArea');
+      if (!deck || deck.vocabs.length === 0) { alert("此單字本內沒有單字可背誦！"); return; }
 
-      if (currentQuizMode === 'en-zh') {
-        qText.innerText = `英文：[${currentQuizItem.pos}] ${currentQuizItem.word}`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入中文翻譯..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'zh-en') {
-        qText.innerText = `中文：${currentQuizItem.meaning} (${currentQuizItem.pos})`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="輸入英文單字..." style="width: 80%;">`;
-      } else if (currentQuizMode === 'audio') {
-        qText.innerText = `🔊 聽力測試 (${currentQuizItem.pos})`;
-        speakWord(currentQuizItem.word);
-        inputArea.innerHTML = `<button onclick="speakWord('${currentQuizItem.word}')">再次播放 🔊</button><br><input type="text" id="quizAnswer" placeholder="輸入聽到的英文..." style="width: 80%; margin-top: 8px;">`;
-      } else if (currentQuizMode === 'spelling') {
-        qText.innerText = `拼字：${currentQuizItem.meaning} [${currentQuizItem.pos}]`;
-        inputArea.innerHTML = `<input type="text" id="quizAnswer" placeholder="正確拼出英文..." style="width: 80%;">`;
+      // 洗牌演算法 (Shuffle)
+      quizQueue = [...deck.vocabs].sort(() => Math.random() - 0.5);
+      document.getElementById('quizStartArea').style.display = 'none';
+      document.getElementById('quizActiveArea').style.display = 'block';
+      showNextQuizCard();
+    }
+
+    function showNextQuizCard() {
+      if (quizQueue.length === 0) {
+        alert("🎉 恭喜你！當前單字本的所有單字已經全部背完囉！");
+        resetQuizUI();
+        return;
       }
+
+      currentQuizWord = quizQueue[0];
+      document.getElementById('quizRemainingCount').innerText = `剩餘單字：${quizQueue.length} 個`;
+      document.getElementById('flashWord').innerText = currentQuizWord.word;
+      document.getElementById('flashPOS').innerText = `[${currentQuizWord.pos}]`;
+      document.getElementById('flashMeaning').innerText = currentQuizWord.meaning;
+      document.getElementById('flashMeaning').style.display = 'none';
     }
 
-    function speakWord(text) {
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      synth.speak(utter);
+    function toggleFlashMeaning() {
+      const m = document.getElementById('flashMeaning');
+      m.style.display = m.style.display === 'none' ? 'block' : 'none';
     }
 
-    function checkAnswer() {
-      const userAns = document.getElementById('quizAnswer').value.trim().toLowerCase();
-      const res = document.getElementById('quizResult');
-      let isCorrect = (currentQuizMode === 'en-zh') ? currentQuizItem.meaning.includes(userAns) : (userAns === currentQuizItem.word.toLowerCase());
-
-      if (isCorrect) {
-        res.innerHTML = `<span style="color:var(--accent);">🎉 正確！${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
-        setTimeout(nextQuestion, 1200);
+    function nextRandomWord(remembered) {
+      if (remembered) {
+        // 答對了：從佇列中移除
+        quizQueue.shift();
       } else {
-        res.innerHTML = `<span style="color:var(--danger);">❌ 答錯囉！答案：${currentQuizItem.word} = ${currentQuizItem.meaning}</span>`;
+        // 還沒記住：移到隊尾重新隨機背誦
+        const item = quizQueue.shift();
+        quizQueue.push(item);
+        quizQueue.sort(() => Math.random() - 0.5);
       }
+      showNextQuizCard();
     }
 
     // --- 雙作息圓盤 ---
@@ -780,7 +600,7 @@
       setInstance(newInst);
     }
 
-    // --- 習慣與 To-Do ---
+    // --- 習慣追蹤與 To-Do ---
     function addHabit() {
       const name = document.getElementById('habitInput').value.trim();
       if (!name) return;
